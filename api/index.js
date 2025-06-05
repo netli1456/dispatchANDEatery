@@ -30,7 +30,8 @@ app.use(
       'http://localhost:3000',
       'https://localhost',
       'capacitor://localhost', 
-      'https://bite-5irv.onrender.com' 
+      'https://bite-5irv.onrender.com',
+      'https://naijaeateries.com' 
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
