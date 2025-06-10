@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  {   useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -17,8 +17,11 @@ function Shipping({ setShipOpen }) {
   const [state, setState] = useState(shipping?.state || '');
   const [phoneNumber, setPhoneNumber] = useState(shipping?.phoneNumber || '');
 
-  const dispatch = useDispatch();
 
+
+
+  const dispatch = useDispatch();
+   
   const handleShipping = async (e) => {
     e.preventDefault();
     if (name || localGvt || phoneNumber || country || street || state) {
@@ -35,7 +38,7 @@ function Shipping({ setShipOpen }) {
   
 
   return (
-    <div className="mt-">
+    <div className="mt-5">
       <Card
        
         style={{ maxWidth: '600px', minWidth: '400px', height: 'fit-content',  }}
@@ -57,6 +60,17 @@ function Shipping({ setShipOpen }) {
                     required={true}
                     placeholder=" write name here"
                     style={{width:"100%"}}
+                    value={name}
+                  />
+                </InputGroup>
+                <InputGroup className="my-3 d-flex flex-column">
+                  <strong className="fw-bold">Street *</strong>
+                  <Form.Control
+                  style={{width:"100%"}}
+                    type="text"
+                    onChange={(e) => setStreet(e.target.value)}
+                    required
+                    value={street}
                   />
                 </InputGroup>
 
@@ -70,8 +84,10 @@ function Shipping({ setShipOpen }) {
                     onChange={(e) => setLocalGvt(e.target.value)}
                     required={true}
                     placeholder=" write LGA here"
+                    value={localGvt}
                   />
                 </InputGroup>
+
                 <InputGroup className="my-3 d-flex flex-column">
                   <strong className="fw-bold">State *</strong>
                   <Form.Control
@@ -80,6 +96,7 @@ function Shipping({ setShipOpen }) {
                     onChange={(e) => setState(e.target.value)}
                     required
                     placeholder=" write state here"
+                    value={state}
                   />
                 </InputGroup>
                 <InputGroup className="my-3 d-flex flex-column">
@@ -90,6 +107,7 @@ function Shipping({ setShipOpen }) {
                     onChange={(e) => setCountry(e.target.value)}
                     required
                     placeholder="write country here"
+                    value={country}
                   />
                 </InputGroup>
                 <InputGroup className="my-3 d-flex flex-column">
@@ -102,17 +120,10 @@ function Shipping({ setShipOpen }) {
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     required
                     placeholder=" write number here"
+                    value={phoneNumber}
                   />
                 </InputGroup>
-                <InputGroup className="my-3 d-flex flex-column">
-                  <strong className="fw-bold">Street *</strong>
-                  <Form.Control
-                  style={{width:"100%"}}
-                    type="text"
-                    onChange={(e) => setStreet(e.target.value)}
-                    required
-                  />
-                </InputGroup>
+                
 
                 <div className="d-flex gap-3 align-items-center my-3">
                   <Button

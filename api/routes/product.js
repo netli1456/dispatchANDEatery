@@ -3,6 +3,7 @@ import {
   getProducts,
   kitchenCat,
   kitchenItems,
+  ping,
   postProduct,
   relatedProducts,
   singleProduct,
@@ -20,5 +21,6 @@ productRouter.get('/find/:id', singleProduct);
 productRouter.get('/kitchen/:userId', kitchenItems);
 productRouter.get('/kitchen/cat/:userId', kitchenCat);
 productRouter.post('/recommended', relatedProducts);
+productRouter.get('/pings', ping);
 
 export default productRouter;

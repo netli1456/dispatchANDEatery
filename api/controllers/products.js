@@ -1,8 +1,13 @@
 import Product from '../models/Product.js';
 import User from '../models/userModel.js';
 
-
-
+export const ping = async (req, res) => {
+ try {
+   res.status(200).json('ping');
+ } catch (error) {
+  res.status(500).json('na error', error)
+ }
+};
 
 export const postProduct = async (req, res) => {
   try {
@@ -33,7 +38,7 @@ export const postProduct = async (req, res) => {
       userId: user._id,
       imgs: imgs,
     });
-      await product.save();
+    await product.save();
     res.status(200).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });

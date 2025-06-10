@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
@@ -30,8 +30,6 @@ function Order() {
   const [loading, setLoading] = useState('page' || false);
   const [error, setError] = useState(false);
   const { shipping } = useSelector((state) => state.shippingAddress);
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-
 
   const navigate = useNavigate();
   const fingerprint = useFingerprint();
@@ -90,7 +88,6 @@ function Order() {
     };
   }, []);
 
-
   const items = (data) => {
     return data?.products?.map((item, index) => (
       <span key={index} className="font1 ">
@@ -129,17 +126,6 @@ function Order() {
     }
   };
 
-  useEffect(() => {
-    if (
-      shipping?.reference !== '' &&
-      shipping?.reference !== undefined &&
-      shipping?.reference !== null
-    ) {
-      verifyPayment(shipping?.reference);
-    }
-  }, [shipping]);
-
-
   const orderId = data?.details?._id;
 
   const verifyPayment = async (reference) => {
@@ -168,16 +154,16 @@ function Order() {
   };
 
   useEffect(() => {
-    const checkScreenSize = () => {
-      setIsSmallScreen(window.innerWidth < 1200);
-    };
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
+    if (
+      shipping?.reference !== '' &&
+      shipping?.reference !== undefined &&
+      shipping?.reference !== null
+    ) {
+      verifyPayment(shipping?.reference);
+    }
+  }, [shipping]);
 
-    return () => {
-      window.removeEventListener('resize', checkScreenSize);
-    };
-  }, []);
+
 
   return (
     <div>
@@ -196,6 +182,10 @@ function Order() {
                   <div className="fw-bold fs-5 text-center text-success">
                     Order Details({data && data?.products?.length} items)
                   </div>
+
+
+
+
                   <div className="d-flex  p-3 border   justify-content-between ">
                     {loading ? (
                       <Box sx={{ pt: 0.5 }}>
@@ -241,12 +231,11 @@ function Order() {
                             </div>
                           </div>
                         </div>
-                        
+
                         {data?.products &&
                           data?.products[0]?.businessId !== false &&
                           data?.details?.isCancelled === false && (
-                            <> 
-                           
+                            <>
                               {data?.details && !data?.details?.isTaken ? (
                                 <div>
                                   {!cancelWarning && (
@@ -308,12 +297,9 @@ function Order() {
                                 </div>
                               ) : (
                                 <>
-                                
                                   {userInfo?.user?._id !==
                                     data?.details?.buyerId && (
                                     <div className="font1bg my-3 p-2 border border-rounded">
-                                      
-
                                       {data?.details?.isPaid && (
                                         <div className="d-flex justify-content-between">
                                           {' '}
@@ -362,8 +348,7 @@ function Order() {
                         {data?.details &&
                           data?.details?.isCancelled === false &&
                           data?.details?.buyerId === userInfo?.user?._id && (
-                            <div  className="font1bg my-3 p-2 border border-rounded">
-                              
+                            <div className="font1bg my-3 p-2 border border-rounded">
                               <div
                                 className={
                                   data?.details?.isPaid
@@ -443,15 +428,7 @@ function Order() {
                         )}
                       </div>
                     )}
-                    <div>
-                      <Button
-                        onClick={() => navigate(`/profile/${userInfo._id}`)}
-                        variant="success"
-                        className="bg-success text-white fw-bold"
-                      >
-                        All Orders
-                      </Button>
-                    </div>
+                    
                   </div>
                   <div>
                     <div className="fs-4 fw-bold text-center my-3">
@@ -529,6 +506,15 @@ function Order() {
                         </ListGroup>
                       </Col>
                     </Row>
+                    <div className='text-center my-4'>
+                      <Button
+                        onClick={() => navigate(`/profile/${userInfo._id}`)}
+                        variant="success"
+                        className="bg-success text-white "
+                      >
+                        See All Your Orders
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </Container>

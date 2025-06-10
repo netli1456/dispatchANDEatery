@@ -110,3 +110,32 @@ body {
   opacity: 1 !important;
   transition: 0.5 ease-in-out !important;
 }
+
+
+
+
+
+
+.curved-text {
+  display: inline-block !important;
+  font-family: 'Pacifico', cursive !important; /* You can change this to other fancy fonts */
+  font-size: 24px !important;
+  font-weight: bold !important;
+  color: #d4af37 !important; /* gold-like */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2) !important;
+  transform: rotate(-2deg) !important;
+  background: linear-gradient(90deg, #f7c873, #dfa90e) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  animation: wave 3s ease-in-out infinite !important;
+}
+
+/* Optional wave animation */
+@keyframes wave {
+  0%, 100% {
+    transform: rotate(-2deg) !important;
+  }
+  50% {
+    transform: rotate(2deg) !important;
+  }
+}

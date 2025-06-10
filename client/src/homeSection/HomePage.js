@@ -79,6 +79,8 @@ function HomePage(props) {
     dispatch(clearLocation());
   };
 
+
+
   return (
     <div style={{ overflowX: 'hidden', backgroundColor: '' }}>
       <Map setOpen={setOpen} />
@@ -86,7 +88,7 @@ function HomePage(props) {
       <div className="my-5 d-flex justify-content-center">
         {' '}
         <h3 className="border-bottom border-secondary">
-          We diliver to your door-step
+          Eateries / Restaurants near you
           <HouseOutlinedIcon className="fs-1 text-success" />
         </h3>
       </div>

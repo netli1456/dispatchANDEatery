@@ -25,7 +25,11 @@ import SetMealIcon from '@mui/icons-material/SetMeal';
 import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
 import { toast } from 'react-toastify';
 import LoadingBox from '../LoadingBox';
-import { pageSuccess, resetProducts, searchSuccess } from '../redux/searchSlice';
+import {
+  pageSuccess,
+  resetProducts,
+  searchSuccess,
+} from '../redux/searchSlice';
 
 function SearchScreen(props) {
   const { search } = useLocation();
@@ -35,7 +39,9 @@ function SearchScreen(props) {
   const popularFilter = sp.get('popularFilter') || '';
   const rating = sp.get('rating') || '';
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const { searchedLocation, searchproducts, pagecounts } = useSelector((state) => state.searching);
+  const { searchedLocation, searchproducts, pagecounts } = useSelector(
+    (state) => state.searching
+  );
   const [page, setPage] = useState(initialPage);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -51,28 +57,23 @@ function SearchScreen(props) {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isSearchBarVisible, setIsSearchBarVisible] = useState(true);
 
-  
   const handleScroll = () => {
     const currentScrollY = window.scrollY;
 
     if (currentScrollY < lastScrollY) {
-      
       setIsScrollingUp(true);
-      setIsSearchBarVisible(true); 
+      setIsSearchBarVisible(true);
     } else {
-     
       setIsScrollingUp(false);
-      setIsSearchBarVisible(false); 
+      setIsSearchBarVisible(false);
     }
 
     setLastScrollY(currentScrollY);
   };
 
-
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
 
-    
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -90,16 +91,12 @@ function SearchScreen(props) {
           const { stores, totalPages } = data;
 
           if (page === 1) {
-            
             dispatch(resetProducts(stores));
           } else {
-           
-            dispatch(searchSuccess([...stores])); 
+            dispatch(searchSuccess([...stores]));
           }
           dispatch(pageSuccess(totalPages));
           setLoading(false);
-
-         
         } catch (error) {
           toast.error('something went wrong, try again later', {
             autoClose: 3000,
@@ -128,9 +125,13 @@ function SearchScreen(props) {
   const handleFilter = (filterData) => {
     setPage(1);
     if (filterData === 'Rating') {
-      navigate(`/search?searchedLocation=${locationQuery}&query=${query}&rating=4`);
+      navigate(
+        `/search?searchedLocation=${locationQuery}&query=${query}&rating=4`
+      );
     } else if (filterData !== 'Near me') {
-      navigate(`/search?searchedLocation=${locationQuery}&popularFilter=${filterData}`);
+      navigate(
+        `/search?searchedLocation=${locationQuery}&popularFilter=${filterData}`
+      );
     } else {
       if (searchedLocation) {
         navigate(`/search?&searchedLocation=${searchedLocation}`);
@@ -140,8 +141,6 @@ function SearchScreen(props) {
     }
   };
 
-
-
   const handleChangePage = () => {
     const nextPage = page + 1;
     setPage(nextPage);
@@ -149,11 +148,26 @@ function SearchScreen(props) {
       `/search?searchedLocation=${locationQuery}&query=${query}&page=${nextPage}&popularFilter=${popularFilter}&rating=${rating}`
     );
   };
+
+  const topOffset = isSmallScreen
+    ? isScrollingUp
+      ? 160
+      : -70
+    : isSearchBarVisible
+    ? 160
+    : 70;
+  const height = `calc(100vh - ${topOffset}px)`;
+
   return (
     <div>
       <div
-         className={`search-bar-wrapper`}
-        style={{ position: 'sticky', width: '100%', top: isScrollingUp ? 50 : -100, zIndex: isScrollingUp ? 8 : 0 }}
+        className={`search-bar-wrapper`}
+        style={{
+          position: 'sticky',
+          width: '100%',
+          top: isScrollingUp ? 50 : -100,
+          zIndex: isScrollingUp ? 8 : 0,
+        }}
       >
         {' '}
         <SearchBar />
@@ -172,15 +186,21 @@ function SearchScreen(props) {
         <Container className="mb-5">
           <Row className="my-3">
             <Col
-              md={ 3}
+              md={3}
               style={{
                 position: isSmallScreen ? 'sticky' : 'fixed',
                 width: isSmallScreen ? '100%' : '250px',
-                top: isSmallScreen ? (isScrollingUp ? 160 : -70) : (isSearchBarVisible ? 160 : 70),
+                top: topOffset,
                 zIndex: isSmallScreen ? (isScrollingUp ? 8 : 0) : '',
                 backgroundColor: isScrollingUp ? 'white' : '',
+                overflow: 'auto',
+                height: isSmallScreen ? 'auto' : height,
               }}
-              className={isSmallScreen ? 'mb-3 search-bar-wrapper' : ' search-bar-wrapper'}
+              className={
+                isSmallScreen
+                  ? 'mb-3 search-bar-wrapper'
+                  : ' search-bar-wrapper'
+              }
             >
               <ListGroup
                 variant="flush"
@@ -201,7 +221,6 @@ function SearchScreen(props) {
                 <ListGroup.Item
                   className={!isSmallScreen ? 'mb-3 hovering' : 'd-none'}
                   onClick={() => handleFilter('rating')}
-
                 >
                   {' '}
                   <span className="d-flex align-items-center gap-3">
@@ -335,9 +354,13 @@ function SearchScreen(props) {
                 </ListGroup>
               </div>
             </Col>
-            <Col  style={{
+
+            <Col
+              style={{
                 marginLeft: isSmallScreen ? '0' : '250px',
-              }} className="scrollable-columnn" >
+              }}
+              className="scrollable-columnn"
+            >
               {(query || popularFilter) && searchproducts?.length === 0 && (
                 <div className="my-5">
                   <div className=" d-flex justify-content-center align-items-center flex-column">
@@ -367,7 +390,8 @@ function SearchScreen(props) {
                 columnsCountBreakPoints={{ 350: 1, 765: 2, 900: 2 }}
               >
                 <Masonry gutter="10px">
-                  {searchproducts && searchproducts?.length > 0 &&
+                  {searchproducts &&
+                    searchproducts?.length > 0 &&
                     searchproducts.map((item, index) => (
                       <Link
                         to={`/kitchen/${item?._id}`}

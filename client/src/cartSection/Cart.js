@@ -18,7 +18,6 @@ import { clearCart } from '../redux/cartSlice';
 import { api, useFingerprint } from '../utils/apiConfig';
 import Recommended from '../recommended/Recommended';
 import Spinners from '../utils/Spinner';
-import PayButton from '../component/PayButton';
 
 function Cart() {
   const { cartItems } = useSelector((state) => state.cart);
@@ -84,7 +83,7 @@ function Cart() {
         });
       } else {
         toast.error(
-          'please fill the shipping address',
+          
           error.response.data.message,
           {
             autoClose: false,
@@ -144,21 +143,8 @@ function Cart() {
                       Total: {`N${total?.toFixed(2)}`}
                     </strong>
                   </div>
-                  <div
-                    className="d-flex align-items-center"
-                    style={{ width: '100%' }}
-                  >
-                    {' '}
-                    <Button
-                      style={{ width: 'fit-content' }}
-                      variant="light"
-                      className="text-success"
-                    >
-                      <AddIcon />
-                      Add payment method
-                    </Button>{' '}
-                  </div>
-                  {shipping.name && <ShippingDetails shipping={shipping} />}
+                
+                  {shipping?.name && <ShippingDetails shipping={shipping} />}
                   <div
                     className="d-flex align-items-center"
                     style={{ width: '100%' }}
@@ -169,8 +155,8 @@ function Cart() {
                       className="text-success"
                       onClick={() => setShipOpen(true)}
                     >
-                      {<AddIcon />}
-                      {shipping.name ? 'Edit Shipping' : 'Add Shipping'}
+                      {!shipping?.name && <AddIcon />}
+                      {shipping?.name ? 'Edit' : 'Add Shipping'}
                     </Button>{' '}
                   </div>
                 </div>
