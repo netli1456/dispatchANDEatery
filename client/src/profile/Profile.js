@@ -64,7 +64,6 @@ const Profile = () => {
           setData(data);
           setLoading(false);
           setCounts(data?.counts);
-          console.log(data);
         } catch (error) {
           toast.error(error?.response?.data?.message, {
             toastId: 'unique_toast_id',

@@ -74,7 +74,8 @@ function VendorRegistration(props) {
       );
 
       setData(data);
-
+      setUploadOpen(false);
+      navigate(`${`/kitchen/${userInfo?.user?._id}`}`)
       toast.success(
         <div>
           <p>Registration successful!</p>

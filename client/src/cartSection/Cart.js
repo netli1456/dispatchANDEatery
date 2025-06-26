@@ -23,10 +23,16 @@ function Cart() {
   const { cartItems } = useSelector((state) => state.cart);
   const { shipping } = useSelector((state) => state.shippingAddress);
   const [shipOpen, setShipOpen] = useState(false);
-  const cartItemTotal = cartItems?.reduce(
-    (a, c) => a + c.price * c.quantity,
-    0
-  );
+  const cartItemTotal = cartItems?.reduce((total, item) => {
+    const productTotal = item.price * item.quantity;
+
+    const extrasTotal =
+      item.extras?.reduce((extraSum, extra) => {
+        return extraSum + extra.price * extra.quantity;
+      }, 0) || 0;
+
+    return total + productTotal + extrasTotal;
+  }, 0);
   const shippingFee = cartItemTotal > 5000 ? 1200 : 1500;
   const total = shippingFee + cartItemTotal;
   const { userInfo } = useSelector((state) => state.user);
@@ -39,8 +45,13 @@ function Cart() {
   const product = cartItems[0];
   const fingerprint = useFingerprint();
 
+
+ 
+
   const handleOrder = async () => {
     setLoading(true);
+    const extras = cartItems?.map((item) => item.extras)?.map((i)=> i.filter((e) => e.quantity > 0));
+    console.log('flat extras', extras);
     try {
       if (userInfo?.user?._id) {
         const { data } = await axios.post(
@@ -51,6 +62,7 @@ function Cart() {
             total: total,
             subtotal: cartItemTotal,
             shippingFee: shippingFee,
+            extras: extras,
           }
         );
         setOrder(data);
@@ -82,15 +94,11 @@ function Cart() {
           toastId: 'unique-toast-id',
         });
       } else {
-        toast.error(
-          
-          error.response.data.message,
-          {
-            autoClose: false,
-            theme: 'colored',
-            toastId: 'unique-toast-id',
-          }
-        );
+        toast.error(error.response.data.message, {
+          autoClose: false,
+          theme: 'colored',
+          toastId: 'unique-toast-id',
+        });
       }
       setLoading(false);
     }
@@ -143,7 +151,7 @@ function Cart() {
                       Total: {`N${total?.toFixed(2)}`}
                     </strong>
                   </div>
-                
+
                   {shipping?.name && <ShippingDetails shipping={shipping} />}
                   <div
                     className="d-flex align-items-center"
@@ -181,9 +189,7 @@ function Cart() {
                       <div>
                         <strong className="border-bottom border-grey">
                           SubTotal({cartItems?.length} items):{' '}
-                          {`N${cartItems
-                            .reduce((a, c) => a + c.price * c.quantity, 0)
-                            .toFixed(2)}`}
+                          {`N${(total - shippingFee).toFixed(2)}`}
                         </strong>
                       </div>
                       <div>
@@ -194,7 +200,7 @@ function Cart() {
                           className=" fw-bold"
                         >
                           Delivery Fee :{' '}
-                          {cartItems.reduce(
+                          {cartItems?.reduce(
                             (a, c) => a + c.price * c.quantity,
                             0
                           ) > 5000
@@ -216,12 +222,11 @@ function Cart() {
                         >
                           <Button
                             style={{ width: '100%' }}
-                            variant= 'success' 
+                            variant="success"
                             className=" border-bottom border-grey fs-5  fw-bold"
                             onClick={handleOrder}
                           >
-                           
-                             Check out
+                            Check out
                           </Button>{' '}
                           {loading && (
                             <div

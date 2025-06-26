@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Map from '../component/Map';
 import HouseOutlinedIcon from '@mui/icons-material/HouseOutlined';
 import Cards from '../component/Cards';
@@ -6,11 +6,9 @@ import { Link, useLocation } from 'react-router-dom';
 import './homePage.css';
 import HomeFeatures from './HomeFeatures';
 import Footer from '../footerSection/Footer';
-
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { api } from '../utils/apiConfig';
-
 import { Box, Skeleton } from '@mui/material';
 import LetsDoItTogether from './LetsDoItTogether';
 import CategoryLayout from './CategoryLayout';
@@ -79,8 +77,6 @@ function HomePage(props) {
     dispatch(clearLocation());
   };
 
-
-
   return (
     <div style={{ overflowX: 'hidden', backgroundColor: '' }}>
       <Map setOpen={setOpen} />
@@ -92,12 +88,36 @@ function HomePage(props) {
           <HouseOutlinedIcon className="fs-1 text-success" />
         </h3>
       </div>
-      {cartItems?.length > 0 && (
-        <h5 className="font1bg text-danger p-2  fw-bold p-1 d-flex justify-content-center align-items-center">
-          Recommended Items from the store in your cart
-        </h5>
-      )}
+
+      <div className="rowParent2 ">
+        <HomeFeatures loading={loading} carouselData={carouselData} />
+        <div className="d-flex justify-content-center text-secondary  py-3">
+          <div className="d-flex my-5 flex-column">
+            <Link
+              to="/search"
+              className=" text-decoration-none fs-5  fw-bold text-secondary text-capitalize border-bottom border-danger"
+            >
+              See all available kitchens
+            </Link>
+            <span>
+              {carouselData?.length < 50
+                ? carouselData?.length + randomNum
+                : carouselData}{' '}
+              stores are currently online
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="text-center  my-5">
+        <h1 className="pb-3">Browse our categories</h1>
+        <CategoryLayout setOpen={setOpen} />
+      </div>
+
       <div>
+        <div className="text-center my-4 w-50 m-auto border-bottom border-success">
+          <h5 className="  text-success ">Suggested for you</h5>
+        </div>
         <ResponsiveMasonry
           columnsCountBreakPoints={{
             250: 1,
@@ -111,7 +131,7 @@ function HomePage(props) {
           <Masonry gutter="10px">
             {(loading ? Array.from(new Array(6)) : data)?.map((item, index) => (
               <Link
-                to={`/kitchen/${item?.userId}`}
+                to={`/product/${item?._id}`}
                 key={`${index}`}
                 className="bo  text-decoration-none "
                 style={{
@@ -152,29 +172,6 @@ function HomePage(props) {
             </Link>
           </div>
         )}
-      </div>
-      <div className="text-center  my-5">
-        <h1 className="pb-3">Browse our categories</h1>
-        <CategoryLayout setOpen={setOpen} />
-      </div>
-      <div className="d-flex justify-content-center text-secondary  py-3">
-        <div className="d-flex my-5 flex-column">
-          <Link
-            to="/search"
-            className=" text-decoration-none fs-5  fw-bold text-secondary text-capitalize border-bottom border-danger"
-          >
-            See all available kitchens
-          </Link>
-          <span>
-            {carouselData?.length < 50
-              ? carouselData?.length + randomNum
-              : carouselData}{' '}
-            stores are currently online
-          </span>
-        </div>
-      </div>
-      <div className="rowParent2   ">
-        <HomeFeatures loading={loading} carouselData={carouselData} />
       </div>
       <div style={{ marginTop: '120px' }}></div>
       <div className="my-5">

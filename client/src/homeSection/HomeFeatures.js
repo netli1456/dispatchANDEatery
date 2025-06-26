@@ -1,27 +1,15 @@
 import React from 'react';
 import Col from 'react-bootstrap/Col';
-import Carousel from 'react-bootstrap/Carousel';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
-import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 import { Box, Skeleton } from '@mui/material';
+import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 
 function HomeFeatures({ carouselData, loading }) {
   return (
     <Row className=" m-1">
-      <Col md={6} className="mt-3 mb-3">
-        <div className="d-flex justify-content-center bg-white rowfirstcol ">
-          <ul >
-            <li>Budget-friendly options for every customer</li>
-            <li>Guaranteed 100% delivery success rate</li>
-            <li>Wide variety of cuisines to satisfy diverse tastes</li>
-            <li>Efficient and timely delivery services</li>
-            <li>User-friendly mobile app for seamless ordering</li>
-          </ul>
-        </div>
-      </Col>
-      <Col md={6} className="mb-3">
+      <Col md={12} className="my-3">
         {loading ? (
           <div>
             <Skeleton variant="rectangular" height={200} />
@@ -31,44 +19,33 @@ function HomeFeatures({ carouselData, loading }) {
             </Box>
           </div>
         ) : (
-          <>
+          <div>
             {carouselData && carouselData?.length > 0 ? (
-              <Carousel controls={true} indicators={false}  className="custom-carousel">
-                {carouselData.map((item, index) => (
-                  <Carousel.Item
-                    key={`${item?._id}-${index}`}
-                    className="carouselIte"
-                  >
-                    <div style={{ height: '380px' }}>
-                      <Button className=" suggetWidth fw-bold border-bottom border-success bg-success text-white mt-3 mb-1">
-                        suggested kitchens for you
-                      </Button>
+              <ResponsiveMasonry
+                columnsCountBreakPoints={{
+                  300: 1,
+
+                  1000: 3,
+
+                  600: 2,
+                  1200: 3,
+                }}
+              >
+                <Masonry gutter="10px">
+                  {carouselData?.map((item, index) => (
+                    <div key={`${item?._id}-${index}`} style={{ height: '' }}>
                       <Card>
                         <Link
                           className="text-decoration-none"
                           to={`/kitchen/${item?._id}`}
                         >
-                          <Card.Title className="p-2 text-capitalize">
-                            {' '}
-                            <span className="text-capitalize d-flex gap-2 align-items-center text-succes">
-                              {item?.businessName}
-                              {item?.verified && (
-                                <img
-                                  src="https://cdn-icons-png.freepik.com/512/7641/7641727.png"
-                                  alt=""
-                                  style={{ width: '20px' }}
-                                />
-                              )}
-                            </span>
-                          </Card.Title>
                           <div>
                             {item ? (
                               <img
-                                
                                 style={{
                                   width: '100%',
-                                  height: '200px',
-                                  objectFit: 'cover',
+                                  height: '120px',
+                                  objectFit: '',
                                 }}
                                 src={item?.businessImg}
                                 alt=""
@@ -79,6 +56,19 @@ function HomeFeatures({ carouselData, loading }) {
                           </div>
 
                           <Card.Body>
+                            <Card.Title className=" text-capitalize">
+                              {' '}
+                              <strong className="text-capitalize d-flex gap-2 align-items-center text-succes">
+                                {item?.businessName}
+                                {item?.verified && (
+                                  <img
+                                    src="https://cdn-icons-png.freepik.com/512/7641/7641727.png"
+                                    alt=""
+                                    style={{ width: '20px' }}
+                                  />
+                                )}
+                              </strong>
+                            </Card.Title>
                             <div className="d-flex text-black   homefet flex-column mx-2">
                               <span>
                                 Delivery time: {item?.deliveryRate}hour{' '}
@@ -89,9 +79,9 @@ function HomeFeatures({ carouselData, loading }) {
                         </Link>
                       </Card>
                     </div>
-                  </Carousel.Item>
-                ))}
-              </Carousel>
+                  ))}
+                </Masonry>
+              </ResponsiveMasonry>
             ) : (
               <div
                 className="text-center  d-flex justify-content-center align-items-center"
@@ -105,7 +95,7 @@ function HomeFeatures({ carouselData, loading }) {
                 />
               </div>
             )}
-          </>
+          </div>
         )}
       </Col>
     </Row>

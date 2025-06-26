@@ -22,6 +22,7 @@ import ChangePassword from './signIn/ChangePassword';
 import Error from './utils/Error';
 import VendorRegistration from './component/VendorRegistration';
 import PayTest from './component/PayTest';
+import Extra from './upload/Extra';
 
 function App() {
   const { isOpen, toggle } = useOpen();
@@ -93,6 +94,7 @@ function App() {
           />
           <Route path="*" element={<Error />} />
           <Route path="pay" element={<PayTest />} />
+          <Route path="extra" element={<Extra />} />
         </Routes>
       </div>
     </BrowserRouter>

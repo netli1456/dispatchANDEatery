@@ -39,7 +39,6 @@ function Product() {
           setCurrentImage(data.imgs[0].url);
         }
       } catch (error) {
-        console.log(error);
         setLoadings(false);
         setError(true);
       }
@@ -103,7 +102,7 @@ function Product() {
             >
               <Row>
                 <Col
-                  md={isSmallScreen ? 12 : cartItems.length > 0 ? 9 : 12}
+                  md={isSmallScreen ? 12 : cartItems.length > 0 ? 8 : 12}
                   className="product  p-3 "
                 >
                   {
@@ -117,7 +116,7 @@ function Product() {
                   }
                 </Col>
                 {!isSmallScreen && cartItems.length > 0 && (
-                  <Col md={3} className="my-3">
+                  <Col md={4} className="my-3">
                     <CartCard product={product._id} />
 
                     <Link
@@ -127,7 +126,7 @@ function Product() {
                       <Button
                         to="/cart"
                         variant="light"
-                        className="text-success border-secondary "
+                        className="text-success  border-secondary "
                       >
                         See All
                       </Button>

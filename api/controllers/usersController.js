@@ -628,33 +628,6 @@ export const getStores = async (req, res) => {
       // If a query is provided, prioritize it
       storesQuery = storesQuery.or([{ businessName: { $regex: query, $options: 'i' } }]);
     }
-
-    // if (searchedLocation) {
-    //   // If a searched location is provided, apply it to the query
-    //   storesQuery.or([
-    //     { physicalAddress: { $regex: searchedLocation, $options: 'i' } },
-    //     { placesCanDeliverTo: { $regex: searchedLocation, $options: 'i' } },
-    //   ]);
-    // }
-
-    // Execute the query to get stores
-   
-
-
-
-
-
-
-    
-    // if (query) {
-    //   searchConditions.$or = [
-    //     { businessName: { $regex: query, $options: 'i' } },
-    //   ];
-    // }
-
-    // const popularStorsStored = [];
-   
-    // const noduplicateId = new Set();
    
    
 
@@ -692,17 +665,11 @@ export const getStores = async (req, res) => {
                 },
               ],
             });
-            // if (
-            //   popularstores &&
-            //   !noduplicateId.has(popularstores._id.toString())
-            // ) {
-            //   popularStorsStored.push(popularstores);
-            //   noduplicateId.add(popularstores._id.toString());
-            // }
+           
           }
         }
 
-        // stores = popularStorsStored;
+       
       } else {
         storesQuery.or([
           { physicalAddress: { $regex: searchedLocation, $options: 'i' } },
@@ -729,13 +696,7 @@ export const getStores = async (req, res) => {
       if (products.length > 0) {
         for (const product of products) {
           storesQuery.or({_id:product.userId.toString()});
-          // if (
-          //   popularstores &&
-          //   !noduplicateId.has(popularstores._id.toString())
-          // ) {
-          //   popularStorsStored.push(popularstores);
-          //   noduplicateId.add(popularstores._id.toString());
-          // }
+          
         }
       }
 
@@ -747,7 +708,7 @@ export const getStores = async (req, res) => {
 
     if(!stores) return res.status(404).json({ message:'No stores found'})
 
-    // Apply rating filtering if provided
+    
     if (rating) {
       stores = stores.filter(store => store.rating >= ratingNumber);
     }
@@ -793,6 +754,139 @@ export const getStores = async (req, res) => {
 };
 
 //VENDOR REGISTRATION
+
+
+
+// export const getStores = async (req, res) => {
+//   try {
+//     const {
+//       query = '',
+//       rating,
+//       popularFilter,
+//       page = 1,
+//       pageSize = 12,
+//       searchedLocation,
+//     } = req.query;
+
+//     const ratingNumber = rating ? parseFloat(rating) : null;
+
+//     const searchConditions = {
+//       isBusinessOwner: true,
+//       blocked: false,
+//       suspended: false,
+//     };
+
+//     let storesQuery = User.find(searchConditions);
+
+//     // 🧠 Smart search using keywords
+//     const keywords = query
+//       .toLowerCase()
+//       .split(/[\s,]+/)
+//       .filter((word) => word && !['and', 'or'].includes(word));
+
+//     if (keywords.length > 0) {
+//       storesQuery = storesQuery.or(
+//         keywords.map((word) => ({
+//           businessName: { $regex: word, $options: 'i' },
+//         }))
+//       );
+//     }
+
+//     // 📍 Location-based filtering
+//     if (searchedLocation) {
+//       storesQuery = storesQuery.or([
+//         { physicalAddress: { $regex: searchedLocation, $options: 'i' } },
+//         {
+//           placesCanDeliverTo: {
+//             $regex: searchedLocation,
+//             $options: 'i',
+//           },
+//         },
+//       ]);
+//     }
+
+//     // 🔥 Popular filter — find stores by matching their products
+//     if (popularFilter) {
+//       const popularKeywords = popularFilter
+//         .toLowerCase()
+//         .split(/[\s,]+/)
+//         .filter((w) => w);
+
+//       const products = await Product.find({
+//         $or: popularKeywords.flatMap((word) => [
+//           { type: { $regex: word, $options: 'i' } },
+//           { category: { $regex: word, $options: 'i' } },
+//           { name: { $regex: word, $options: 'i' } },
+//         ]),
+//       });
+
+//       const userIdsFromProducts = [
+//         ...new Set(products.map((p) => p.userId.toString())),
+//       ];
+
+//       if (userIdsFromProducts.length > 0) {
+//         storesQuery = storesQuery.or(
+//           userIdsFromProducts.map((id) => ({ _id: id }))
+//         );
+//       }
+//     }
+
+//     let stores = await storesQuery;
+
+//     if (!stores || stores.length === 0) {
+//       return res.status(200).json({ stores: [], totalPages: 0 });
+//     }
+
+//     // ⭐ Filter by rating
+//     if (ratingNumber) {
+//       stores = stores.filter((store) => store.rating >= ratingNumber);
+//     }
+
+//     // ✨ Format the result
+//     const filteredStores = stores.map((store) => ({
+//       businessName: store.businessName,
+//       _id: store._id,
+//       businessImg: store.businessImg,
+//       verified: store.verified,
+//       rating: store.rating,
+//       km: store.km,
+//       deliveryRate: store.deliveryRate,
+//       physicalAddress: store.physicalAddress,
+//       timeOpen: store.timeOpen,
+//     }));
+
+//     // 📄 Paginate and shuffle
+//     const startIndex = (page - 1) * parseInt(pageSize);
+//     const paginatedStores = filteredStores.slice(
+//       startIndex,
+//       startIndex + parseInt(pageSize)
+//     );
+
+//     // Randomize
+//     const shuffleArray = (array) => {
+//       for (let i = array.length - 1; i > 0; i--) {
+//         const j = Math.floor(Math.random() * (i + 1));
+//         [array[i], array[j]] = [array[j], array[i]];
+//       }
+//     };
+//     shuffleArray(paginatedStores);
+
+//     const totalPages = Math.ceil(filteredStores.length / pageSize);
+
+//     res.status(200).json({
+//       stores: paginatedStores,
+//       totalPages,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+
+
+
+
+
 
 export const vendorRegistration = async (req, res) => {
   try {

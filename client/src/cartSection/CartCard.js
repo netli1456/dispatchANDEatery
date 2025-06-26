@@ -1,13 +1,12 @@
-import React from 'react';
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined';
 
 import ListGroup from 'react-bootstrap/ListGroup';
 
 import Card from 'react-bootstrap/Card';
-import { Link, useLocation } from 'react-router-dom';
+import {  useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addCart, removeCart } from '../redux/cartSlice';
-import Button from 'react-bootstrap/Button';
+import ItemCard from '../kitchenSection/ItemCard';
 
 function CartCard(props) {
   const location = useLocation();
@@ -15,17 +14,30 @@ function CartCard(props) {
   const { product } = props;
   const dispatch = useDispatch();
 
+
   const handleRemoveCart = (id) => {
     dispatch(removeCart(id));
+  };
+
+ const quantity = (item) => {
+    return cartItems?.map((items) =>
+      items._id === item._id ? (
+        <span className="text-outline fw-bold mx-1"> {items.quantity} </span>
+      ) : (
+        ''
+      )
+    );
   };
 
   const handlequantity = (item, quantity) => {
     dispatch(addCart({ ...item, quantity }));
   };
+
+
   return (
     <div>
       {location.pathname !== '/cart' && (
-        <Card>
+        <Card className='shadow'>
           <Card.Body>
             <strong>
               Total({cartItems?.length} Items):{' '}
@@ -37,7 +49,7 @@ function CartCard(props) {
         </Card>
       )}
 
-      <ListGroup className="mt-2 bor">
+      <ListGroup className="mt-2 bor shadow mb-3">
         {location.pathname !== '/cart' && (
           <span className="text-center fw-bold border-bottom border-dark fs-5">
             Your Cart Items
@@ -52,64 +64,8 @@ function CartCard(props) {
             className={' d-flex mb-2 border gap-1 '}
             key={item._id}
           >
-            <Link
-              to={`/product/${item._id}`}
-              style={{ width: '60%', height: '100px' }}
-            >
-              {' '}
-              <img
-                src={item?.imgs[0]?.url}
-                alt=""
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
-            </Link>
-            <div
-              style={{ width: '100%', height: '100%' }}
-              className="d-flex justify-content-center align-items-center flex-column "
-            >
-              <span className="fw-bold text-capitalize text-secondary">
-                {item?.name}
-              </span>
-              <span className="  text-secondary">{item?.desc}</span>
-
-              <strong className=" text-success">
-                N{item?.price.toFixed(2)}
-              </strong>
-              <div className="d-flex align-items-center gap-1">
-                {' '}
-                <Button
-                  style={{
-                    width: '30px',
-                    height: '30px',
-                    borderRadius: '50%',
-                  }}
-                  variant="success"
-                  className=" bg-success d-flex justify-content-center align-items-center fs-3 text-white"
-                  onClick={() => handlequantity(item, item?.quantity - 1)}
-                  disabled={item.quantity === 1}
-                >
-                  -
-                </Button>{' '}
-                {item?.quantity}{' '}
-                <Button
-                  style={{
-                    width: '30px',
-                    height: '30px',
-                    borderRadius: '50%',
-                  }}
-                  variant="success"
-                  className=" bg-success d-flex justify-content-center align-items-center fs-4 text-white"
-                  onClick={() => handlequantity(item, item?.quantity + 1)}
-                >
-                  +
-                </Button>{' '}
-              </div>
-            </div>
-
+            <ItemCard handlequantity={handlequantity} quantity={quantity} item={item} />
+           
             <span
               style={{
                 position: 'absolute',

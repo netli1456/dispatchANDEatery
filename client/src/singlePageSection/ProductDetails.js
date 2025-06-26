@@ -1,22 +1,18 @@
-import React, {  useState } from 'react';
+import  { useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { Link } from 'react-router-dom';
 import CircleIcon from '@mui/icons-material/Circle';
-
 import Button from 'react-bootstrap/Button';
 import Rating from '../component/Rating';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { addCart } from '../redux/cartSlice';
 import CartError from '../utils/CartError';
 import { toast } from 'react-toastify';
 
-
 function ProductDetails(props) {
-  const { product,  isSmallScreen, currentImage, setCurrentImage,  } =
-    props;
+  const { product, isSmallScreen, currentImage, setCurrentImage } = props;
 
   const [error, setError] = useState(null);
 
@@ -33,7 +29,10 @@ function ProductDetails(props) {
         theme: 'light',
         toastId: 'unique-toast-id',
       });
-    } else if (cartItems.length >= 1 && product?.userId === cartItems[0]?.userId) {
+    } else if (
+      cartItems.length >= 1 &&
+      product?.userId === cartItems[0]?.userId
+    ) {
       const existItem = cartItems?.find((item) => item._id === product._id);
       const quantity = existItem ? existItem.quantity + 1 : 1;
       dispatch(addCart({ ...product, quantity }));
@@ -43,11 +42,14 @@ function ProductDetails(props) {
         toastId: 'unique-toast-id',
       });
     } else {
-      toast.warning('You can only add items from one store at a time. you already have an item from another store in your cart. ', {
-        autoClose: false,
-        theme: 'dark',
-        toastId: 'unique-toast-id',
-      });
+      toast.warning(
+        'You can only add items from one store at a time. you already have an item from another store in your cart. ',
+        {
+          autoClose: false,
+          theme: 'dark',
+          toastId: 'unique-toast-id',
+        }
+      );
     }
   };
 
@@ -89,7 +91,7 @@ function ProductDetails(props) {
         </div>
 
         <div
-          style={{width:'fit-content', minWidth: '60%' }}
+          style={{ width: 'fit-content', minWidth: '60%' }}
           className="bg-success d-flex flex-column my-3  p-2 text-white rounded text-capitalize bg-opacity-"
         >
           <strong className="fs-5 fw-bold">
@@ -118,18 +120,19 @@ function ProductDetails(props) {
       <Col md={3} className=" p-0">
         <ListGroup variant="flush">
           <ListGroup.Item>
-            
-              <div className="d-flex align-items-center gap-1">
-                <Link to={`/kitchen/${product.userId}`} className="text-capitalize fw-bold text-secondary">
-                  {product?.businessName}
-                </Link>
-                <img
-                  src="https://cdn-icons-png.freepik.com/512/7641/7641727.png"
-                  alt=""
-                  style={{ width: '20px' }}
-                />
-              </div>
-            
+            <div className="d-flex align-items-center gap-1">
+              <Link
+                to={`/kitchen/${product.userId}`}
+                className="text-capitalize fw-bold text-secondary"
+              >
+                {product?.businessName}
+              </Link>
+              <img
+                src="https://cdn-icons-png.freepik.com/512/7641/7641727.png"
+                alt=""
+                style={{ width: '20px' }}
+              />
+            </div>
           </ListGroup.Item>
           <ListGroup.Item>
             <div className="d-flex flex-column">
@@ -180,9 +183,7 @@ function ProductDetails(props) {
               </Button>
             </div>
           </ListGroup.Item>
-          <ListGroup.Item>
-          
-          </ListGroup.Item>
+          <ListGroup.Item></ListGroup.Item>
         </ListGroup>
       </Col>
       {error && (

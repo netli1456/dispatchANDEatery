@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import  { useEffect, useRef, useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
@@ -15,10 +15,19 @@ import { useNavigate } from 'react-router-dom';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import PublicIcon from '@mui/icons-material/Public';
 import LockIcon from '@mui/icons-material/Lock';
+import Extra from './Extra';
 
 function UploadProduct(props) {
   const [category, setCategory] = useState('');
-  const [visibility, setVisibility] = useState(<span > <PublicIcon/>Public </span> || '');
+  const [visibility, setVisibility] = useState(
+    (
+      <span>
+        {' '}
+        <PublicIcon />
+        Public{' '}
+      </span>
+    ) || ''
+  );
   const [type, setType] = useState('');
   const [contents, setContents] = useState([]);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -33,7 +42,14 @@ function UploadProduct(props) {
   const [data, setData] = useState({});
   const navigate = useNavigate();
   const fingerprint = useFingerprint();
-  const {setUploadOpen, businessImg, businessName}=props
+  const { setUploadOpen, businessImg, businessName } = props;
+
+
+
+  
+    const [extras, setExtras] = useState([]);
+
+  
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -46,6 +62,8 @@ function UploadProduct(props) {
       window.removeEventListener('resize', checkScreenSize);
     };
   }, []);
+
+  console.log('type', type, category)
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -89,18 +107,45 @@ function UploadProduct(props) {
     );
   };
 
-  const dropdows = (items, selectedValue, setFunction) => {
+  const typeData = [
+    {
+      category: 'Food',
+      types: [
+        'Rice',
+        'Pasta',
+        'Swallow',
+        'Snacks',
+        'Desert',
+        'Ice cream',
+        'Meat',
+        'Steaks',
+        'Burger',
+        'Pizza',
+        'Shawarma',
+      ],
+    },
+    {
+      category: 'Beverages',
+      types: ['Coke', 'Fanta', 'Zobo', 'Juice', 'Smoothie'],
+    },
+    {
+      category: 'Water',
+      types: ['Table Water', 'Bottle Water', 'Sachet Water'],
+    },
+    {
+      category: 'Ice-cream',
+      types: ['Vanilla', 'Chocolate', 'Strawberry', 'Mixed Flavour'],
+    },
+  ];
+
+  const dropdows = (items, selectedValue, setFunction, onSelectCallback) => {
     return (
       <Dropdown>
         <Dropdown.Toggle
           style={{
-            backgroundColor:
-             
-                '#d3d3d3',
-            color:
-               '#000',
+            backgroundColor: '#d3d3d3',
+            color: '#000',
             borderColor: '#d3d3d3',
-             
             width: '100%',
           }}
         >
@@ -109,7 +154,13 @@ function UploadProduct(props) {
 
         <Dropdown.Menu>
           {items.map((item, index) => (
-            <Dropdown.Item key={index} onClick={() => setFunction(item)}>
+            <Dropdown.Item
+              key={index}
+              onClick={() => {
+                setFunction(item);
+                if (onSelectCallback) onSelectCallback();
+              }}
+            >
               {item}
             </Dropdown.Item>
           ))}
@@ -124,6 +175,8 @@ function UploadProduct(props) {
       setNewContent('');
     }
   };
+
+  console.log('extra now', extras)
 
   const handleUploadProduct = async (e) => {
     e.preventDefault();
@@ -141,6 +194,7 @@ function UploadProduct(props) {
     formData.append('price', price);
     formData.append('content', JSON.stringify(contents));
     formData.append('visibility', visibility);
+    formData.append('extras', JSON.stringify(extras))
 
     try {
       const { data } = await axios.post(
@@ -153,30 +207,42 @@ function UploadProduct(props) {
       toast.success(
         <div>
           <p>Upload successful!</p>
-          <div className='d-flex align-items-center gap-2'><Button variant="success" className='mx-3' onClick={() => handleViewProduct()}>
-            View Product
-          </Button>
-          <Button variant="danger" className='mx-3' onClick={() => handleCancel()}>
-            Cancel
-          </Button></div>
+          <div className="d-flex align-items-center gap-2">
+            <Button
+              variant="success"
+              className="mx-3"
+              onClick={() => handleViewProduct()}
+            >
+              View Product
+            </Button>
+            <Button
+              variant="danger"
+              className="mx-3"
+              onClick={() => handleCancel()}
+            >
+              Cancel
+            </Button>
+          </div>
         </div>,
         { autoClose: false }
       );
     } catch (error) {
+      toast.error(error, {toastId:'unique-toast-id'})
       console.error('Error during form submission:', error);
     }
   };
 
   const handleViewProduct = () => {
     if (data?._id) {
-      navigate(`/product/${data._id}`);
+      navigate(`/product/${data?._id}`);
       toast.dismiss();
-
+      setUploadOpen(false)
     }
   };
 
   const handleCancel = () => {
     toast.dismiss();
+    setUploadOpen(false)
   };
 
   return (
@@ -196,14 +262,14 @@ function UploadProduct(props) {
             top: 10,
             left: !isSmallScreen ? '20%' : '5%',
           }}
-          onClick={()=>setUploadOpen(false)}
+          onClick={() => setUploadOpen(false)}
         >
           <ArrowBackIosNewIcon />
           Back
         </span>
         <form onSubmit={handleUploadProduct} encType="multipart/form-data">
           <div className="d-flex align-items-center gap-2 mb-3">
-            {businessImg  ? (
+            {businessImg ? (
               <img
                 alt=""
                 style={{
@@ -212,9 +278,7 @@ function UploadProduct(props) {
                   borderRadius: '50px',
                   border: '1px solid',
                 }}
-                src={
-                 businessImg
-                }
+                src={businessImg}
               />
             ) : (
               <AccountCircleIcon
@@ -230,9 +294,41 @@ function UploadProduct(props) {
 
             <div>
               <strong className="text-capitalize">
-                {businessName?.includes('restaurants' || 'shops' || 'restaurant' || 'shop' || 'market' || 'markets' || 'chops' || 'foods' || 'services' || 'chop'  || 'resturant'  || 'restarant'  || 'restarants'  || 'resturants') ? businessName : `${businessName} Shop`}
+                {businessName?.includes(
+                  'restaurants' ||
+                    'shops' ||
+                    'restaurant' ||
+                    'shop' ||
+                    'market' ||
+                    'markets' ||
+                    'chops' ||
+                    'foods' ||
+                    'services' ||
+                    'chop' ||
+                    'resturant' ||
+                    'restarant' ||
+                    'restarants' ||
+                    'resturants'
+                )
+                  ? businessName
+                  : `${businessName} Shop`}
               </strong>
-              {dropdows([<span className='d-fle p-0 m-0 '> <PublicIcon/>Public </span>, <span > <LockIcon/>only me</span>], visibility, setVisibility)}
+              {dropdows(
+                [
+                  <span className="d-fle p-0 m-0 ">
+                    {' '}
+                    <PublicIcon />
+                    Public{' '}
+                  </span>,
+                  <span>
+                    {' '}
+                    <LockIcon />
+                    only me
+                  </span>,
+                ],
+                visibility,
+                setVisibility
+              )}
             </div>
           </div>
 
@@ -328,7 +424,7 @@ function UploadProduct(props) {
           />
 
           <div>
-            <Form.Label>Name</Form.Label>
+            <Form.Label>Product Name</Form.Label>
             <Form.Control
               type="text"
               value={name}
@@ -354,37 +450,25 @@ function UploadProduct(props) {
               className="borders"
             />
           </div>
-          <div>
-            <Form.Label>Category</Form.Label>
-            {dropdows(
-              ['Food', 'Beverages', 'Water', 'ice-cream'],
-              category,
-              setCategory
-            )}
-          </div>
-          <div>
-            <Form.Label>Type</Form.Label>
-            {dropdows(
-              [
-                'Rice',
-                'Pasta',
-                'Swallow',
-                'Snacks',
-                'Desert',
-                'Ice cream',
-                'Meat',
-                'Steaks',
-                'Burger',
-                'Pizza',
-                'Shawarma',
-                'water',
-              ],
-              type,
-              setType
-            )}
-          </div>
-          <div className="d-flex flex-column my-3">
-            <Form.Label className="fw-bold border-secondary border-bottom">
+
+          <Form.Label>Category</Form.Label>
+          {dropdows(
+            ['Food', 'Beverages', 'Water', 'Ice-cream'],
+            category,
+            setCategory,
+            () => setType('') 
+          )}
+
+          <Form.Label>Type</Form.Label>
+          {dropdows(
+            typeData.find((item) => item.category === category)?.types || [],
+            type,
+            setType
+          )}
+
+          <Extra type={type} cat={category} extras={extras} setExtras={ setExtras}/>
+          <div className="d-flex flex-column my-4">
+            <Form.Label className="fw-bold border-secondary text-center border-bottom">
               Contents
             </Form.Label>
 

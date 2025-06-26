@@ -32,11 +32,13 @@ export const postProduct = async (req, res) => {
         imgs.push(eachImage);
       }
     }
-
+    const extras = JSON.parse(req.body.extras)
+  console.log('extra', req.body.extras)
     const product = new Product({
       ...req.body,
       userId: user._id,
       imgs: imgs,
+      extras:extras
     });
     await product.save();
     res.status(200).json(product);
@@ -137,17 +139,22 @@ export const kitchenItems = async (req, res) => {
     ];
 
     if (query !== 'all') {
-      aggregationPipeline.push({
-        $match: {
-          $or: [
-            { desc: { $regex: query, $options: 'i' } },
-            { name: { $regex: query, $options: 'i' } },
-            { category: { $regex: query, $options: 'i' } },
-            { type: { $regex: query, $options: 'i' } },
-          ],
-        },
-      });
-    } else {
+  const keywords = query
+    .toLowerCase()
+    .split(/[\s,]+/)
+    .filter((word) => word && !['and', 'or'].includes(word));
+
+  aggregationPipeline.push({
+    $match: {
+      $or: keywords.flatMap((word) => [
+        { name: { $regex: word, $options: 'i' } },
+        { desc: { $regex: word, $options: 'i' } },
+        { category: { $regex: word, $options: 'i' } },
+        { type: { $regex: word, $options: 'i' } },
+      ]),
+    },
+  });
+} else {
       {
       }
     }

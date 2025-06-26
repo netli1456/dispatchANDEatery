@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 
 import './kitchen.css';
-import Cards from '../component/Cards';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 
 import Col from 'react-bootstrap/Col';
@@ -21,7 +20,7 @@ import { Box, Skeleton } from '@mui/material';
 import LoadingBox from '../LoadingBox';
 import { useDispatch, useSelector } from 'react-redux';
 import { addCart } from '../redux/cartSlice';
-import Button from 'react-bootstrap/esm/Button';
+import ItemCard from './ItemCard';
 
 function Kitchen() {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -81,6 +80,8 @@ function Kitchen() {
     handleSearch();
   }, [query, category, price, page, id]);
 
+  console.log('kitchendata', kitchenData);
+
   useEffect(() => {
     const screenSieze = () => {
       setIsSmallScreen(window.innerWidth < 1200);
@@ -103,6 +104,9 @@ function Kitchen() {
           return;
         }
         dispatch(addCart({ ...item, quantity: quant }));
+         
+        
+
       } else {
         const existItem = cartItems.find((items) => items._id === item._id);
         const quantity = existItem ? existItem.quantity + 1 : 1;
@@ -121,7 +125,7 @@ function Kitchen() {
   };
 
   const quantity = (item) => {
-    return cartItems.map((items) =>
+    return cartItems?.map((items) =>
       items._id === item._id ? (
         <span className="text-outline fw-bold"> {items.quantity} </span>
       ) : (
@@ -133,11 +137,11 @@ function Kitchen() {
   return (
     <div>
       {loading ? (
-        <div style={{ height: '85vh', overflow:'hidden' }}>
+        <div style={{ height: '85vh', overflow: 'hidden' }}>
           <LoadingBox />{' '}
         </div>
       ) : (
-        <div style={{ height: 'auto',  }} >
+        <div style={{ height: 'auto' }}>
           <div style={{ position: 'relative' }}>
             <div
               style={{
@@ -146,7 +150,7 @@ function Kitchen() {
                 position: 'relative',
                 top: '0',
               }}
-              className=''
+              className=""
             >
               <img
                 src={
@@ -157,7 +161,7 @@ function Kitchen() {
                   )
                 }
                 alt=""
-                style={{ width: '100%', height: '100%', objectFit: 'cover',  }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 className="blur-on-hover bod"
               />
             </div>
@@ -322,7 +326,7 @@ function Kitchen() {
                                     : 'd-flex flex-column'
                                 }
                               >
-                                <ListGroup.Item >
+                                <ListGroup.Item>
                                   <strong>Price Range: </strong>
                                   <div className="d-flex fw-bold gap-1 align-items-center">
                                     <span>0</span>
@@ -382,17 +386,15 @@ function Kitchen() {
                                     </div>
                                   </div>
                                 </ListGroup.Item>
-                               
                               </div>
                             )}
-                           
                           </ListGroup>
                         </div>
                       </div>
                     </Col>
                     <Col
                       md={9}
-                      className={isSmallScreen ? 'm-2  ' : ''}
+                      className={isSmallScreen ? 'm-2  border ' : ''}
                       style={{
                         borderLeft: !isSmallScreen ? '1px solid grey' : '',
                         minHeight: '80vh',
@@ -400,84 +402,53 @@ function Kitchen() {
                         width: isSmallScreen ? '100vw' : '',
                       }}
                     >
-                      <ResponsiveMasonry
-                        columnsCountBreakPoints={{
-                          300: 1,
-                          350: 2,
-                          750: 2,
-                          1000: 3,
-                        }}
-                      >
-                        <Masonry gutter="10px">
-                        <div></div>
-                          {(loading
-                            ? Array.from(new Array(9))
-                            : kitchenData.products && kitchenData?.products
-                          )?.map((item, index) => (
-                            <div key={index}>
-                              {item ? (
-                                <div style={{ position: 'relative' }}>
-                                  <Link
-                                    to={`/product/${item._id}`}
-                                    style={{
-                                      maxHeight: '270px',
-                                      minHeight: '270px',
-                                    }}
-                                    className="text-decoration-none rounded kitchhovering"
-                                    key={`${item._id}-${index}`}
-                                  >
-                                    <Cards item={item} />
-                                  </Link>
-                                  <div
-                                    className="d-flex align-items-center gap-1"
-                                    style={{
-                                      position: 'absolute',
-                                      top: 135,
-                                      right: 0,
-                                    }}
-                                  >
-                                    {' '}
-                                    <Button
+                      <div style={{ width: '100%', margin: 'auto' }}>
+                        <ResponsiveMasonry
+                          columnsCountBreakPoints={{
+                            300: 1,
+                            600: 2,
+                            750: 2,
+                            1000: 3,
+                            1200: 2,
+                          }}
+                        >
+                          <Masonry gutter="10px">
+                            {(loading
+                              ? Array.from(new Array(9))
+                              : kitchenData.products && kitchenData?.products
+                            )?.map((item, index) => (
+                              <div key={index}>
+                                {item ? (
+                                  <div style={{ position: 'relative' }}>
+                                    <div
                                       style={{
-                                        width: '30px',
-                                        height: '30px',
-                                        borderRadius: '50%',
+                                        maxHeight: '270px',
+                                        minHeight: '270px',
                                       }}
-                                      variant="success"
-                                      className=" bg-success d-flex justify-content-center align-items-center fs-3 text-white"
-                                      onClick={() =>
-                                        handlequantity(item, item?._id)
-                                      }
+                                      className="text-decoration-none rounded kitchhovering"
+                                      key={`${item._id}-${index}`}
                                     >
-                                      -
-                                    </Button>{' '}
-                                    {quantity(item)}
-                                    <Button
-                                      style={{
-                                        width: '30px',
-                                        height: '30px',
-                                        borderRadius: '50%',
-                                      }}
-                                      variant="success"
-                                      className=" bg-success d-flex justify-content-center align-items-center fs-4 text-white"
-                                      onClick={() => handlequantity(item)}
-                                    >
-                                      +
-                                    </Button>{' '}
+                                      <ItemCard
+                                        kitchenData={kitchenData}
+                                        handlequantity={handlequantity}
+                                        quantity={quantity}
+                                        item={item}
+                                      />
+                                    </div>
                                   </div>
-                                </div>
-                              ) : (
-                                <Box sx={{ pt: 0.5 }}>
-                                  <Skeleton height={250} />
-                                  <Skeleton width="60%" />
-                                  <Skeleton width="60%" />
-                                  <Skeleton width="60%" />
-                                </Box>
-                              )}
-                            </div>
-                          ))}
-                        </Masonry>
-                      </ResponsiveMasonry>
+                                ) : (
+                                  <Box sx={{ pt: 0.5 }}>
+                                    <Skeleton height={250} />
+                                    <Skeleton width="60%" />
+                                    <Skeleton width="60%" />
+                                    <Skeleton width="60%" />
+                                  </Box>
+                                )}
+                              </div>
+                            ))}
+                          </Masonry>
+                        </ResponsiveMasonry>
+                      </div>
                     </Col>
                   </Row>
                 </div>

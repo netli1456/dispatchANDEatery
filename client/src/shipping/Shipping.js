@@ -53,12 +53,12 @@ function Shipping({ setShipOpen }) {
               <strong className="fs-4">Shipping Address</strong>
               <Form onSubmit={handleShipping} style={{width:'90%'}}>
                 <InputGroup className="my-3 d-flex flex-column" >
-                  <strong className="fw-bold">Name *</strong>
+                  <strong className="fw-bold">Full Name *</strong>
                   <Form.Control
                     type="text"
                     onChange={(e) => setName(e.target.value)}
                     required={true}
-                    placeholder=" write name here"
+                    placeholder=" write full name here"
                     style={{width:"100%"}}
                     value={name}
                   />
@@ -71,6 +71,7 @@ function Shipping({ setShipOpen }) {
                     onChange={(e) => setStreet(e.target.value)}
                     required
                     value={street}
+                    placeholder=" write street here"
                   />
                 </InputGroup>
 
@@ -119,7 +120,7 @@ function Shipping({ setShipOpen }) {
                     type="number"
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     required
-                    placeholder=" write number here"
+                    placeholder=" write phone number here"
                     value={phoneNumber}
                   />
                 </InputGroup>

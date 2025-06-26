@@ -163,8 +163,6 @@ function Order() {
     }
   }, [shipping]);
 
-
-
   return (
     <div>
       {loading ? (
@@ -182,9 +180,6 @@ function Order() {
                   <div className="fw-bold fs-5 text-center text-success">
                     Order Details({data && data?.products?.length} items)
                   </div>
-
-
-
 
                   <div className="d-flex  p-3 border   justify-content-between ">
                     {loading ? (
@@ -428,7 +423,6 @@ function Order() {
                         )}
                       </div>
                     )}
-                    
                   </div>
                   <div>
                     <div className="fs-4 fw-bold text-center my-3">
@@ -458,6 +452,19 @@ function Order() {
                               <ListGroup.Item className="font1bg">
                                 {items(data)}
                               </ListGroup.Item>
+                              {data.details?.extras?.length > 0 && (
+                                <div className="font1bg">
+                                 <div className='text-center m-2'> <strong >Extras Items:</strong></div>
+                                  {data?.details?.extras?.map((item, index) => (
+                                    <ListGroup.Item
+                                      className="mx-2"
+                                      key={index}
+                                    >
+                                      <span>{item.item}</span>
+                                    </ListGroup.Item>
+                                  ))}
+                                </div>
+                              )}
                               <ListGroup.Item className="font1bg">
                                 <div className="d-grid">
                                   <Button variant="light">
@@ -506,7 +513,7 @@ function Order() {
                         </ListGroup>
                       </Col>
                     </Row>
-                    <div className='text-center my-4'>
+                    <div className="text-center my-4">
                       <Button
                         onClick={() => navigate(`/profile/${userInfo._id}`)}
                         variant="success"
