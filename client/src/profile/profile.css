@@ -28,3 +28,28 @@
     background-color: rgb(255, 255, 255);
     z-index: 999;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+  .order-button-text {
+    font-size: 0.8rem !important; /* smaller text on medium screens */
+  }
+}
+
+@media (max-width: 576px) {
+  .order-button-text {
+    font-size: 0.7rem !important; /* even smaller on very small screens */
+  }
+}

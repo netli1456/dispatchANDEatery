@@ -60,72 +60,78 @@ const ItemCard = ({ item, handlequantity, quantity, kitchenData }) => {
 
   return (
     <Card
-      style={{ borderRadius: '15px' }}
-      className={location.pathname === '/cart' ? 'p-3  border-0' : 'p-3 shadow'}
+      style={{ borderRadius: '15px', minHeight: '220px', maxHeight: '220px' }}
+      className={
+        location.pathname === '/cart' ? 'p-3  border-0' : 'p-3  shadow'
+      }
     >
       <Row>
         <Col xs={4}>
           <Link to={`/product/${item._id}`} className=" ">
-            <img style={{ width: '100%' }} src={item?.imgs[0]?.url} alt={''} />
+            <img style={{ width: '100%', maxHeight:'120px' }} src={item?.imgs[0]?.url} alt={''} />
           </Link>
           <h6 className="my-2 text-success">N{item?.price?.toFixed(2)}</h6>
-          {cartItems?.find((i) => i._id === item?._id) ? (
-            <div className="d-flex align-items-center gap-1">
-              {' '}
-              <Button
-                style={{
-                  width: '30px',
-                  height: '30px',
-                  borderRadius: '50%',
-                }}
-                variant="success"
-                className=" bg-success d-flex justify-content-center align-items-center fs-3 text-white"
-                disabled={item?.quantity === 1}
-                onClick={() =>
-                  location.pathname !== '/cart' &&
-                  location.pathname !== `/product/${item?._id}`
-                    ? handlequantity(item, item?._id)
-                    : handlequantity(item, item?.quantity - 1)
-                }
-              >
-                -
-              </Button>{' '}
-              {quantity(item)}
-              <Button
-                style={{
-                  width: '30px',
-                  height: '30px',
-                  borderRadius: '50%',
-                }}
-                variant="success"
-                className=" bg-success d-flex justify-content-center align-items-center fs-4 text-white"
-                onClick={() =>
-                  location.pathname !== '/cart' &&
-                  location.pathname !== `/product/${item?._id}`
-                    ? handlequantity(item)
-                    : handlequantity(item, item?.quantity + 1)
-                }
-              >
-                +
-              </Button>{' '}
-            </div>
-          ) : (
-            <div className="w-100">
-              <Button
-                style={{
-                  borderRadius: '10px',
-                }}
-                variant="success"
-                className=" bg-success w-100 text-white"
-                onClick={() =>
-                  location.pathname !== '/cart' &&
-                  location.pathname !== `/product/${item?._id}`
-                    ? handlequantity(item)
-                    : handlequantity(item, item?.quantity + 1)
-                }
-              >
-                Add
-              </Button>{' '}
+          {item?.extras && item?.extras.length > 0 && (
+            <div>
+              {cartItems?.find((i) => i._id === item?._id) ? (
+                <div className="d-flex align-items-center gap-1">
+                  {' '}
+                  <Button
+                    style={{
+                      width: '30px',
+                      height: '30px',
+                      borderRadius: '50%',
+                    }}
+                    variant="success"
+                    className=" bg-success d-flex justify-content-center align-items-center fs-3 text-white"
+                    disabled={item?.quantity === 1}
+                    onClick={() =>
+                      location.pathname !== '/cart' &&
+                      location.pathname !== `/product/${item?._id}`
+                        ? handlequantity(item, item?._id)
+                        : handlequantity(item, item?.quantity - 1)
+                    }
+                  >
+                    -
+                  </Button>{' '}
+                  {quantity(item)}
+                  <Button
+                    style={{
+                      width: '30px',
+                      height: '30px',
+                      borderRadius: '50%',
+                    }}
+                    variant="success"
+                    className=" bg-success d-flex justify-content-center align-items-center fs-4 text-white"
+                    onClick={() =>
+                      location.pathname !== '/cart' &&
+                      location.pathname !== `/product/${item?._id}`
+                        ? handlequantity(item)
+                        : handlequantity(item, item?.quantity + 1)
+                    }
+                  >
+                    +
+                  </Button>{' '}
+                </div>
+              ) : (
+                <div className="w-100">
+                  <Button
+                    style={{
+                      borderRadius: '10px',
+                    }}
+                    variant="success"
+                    className=" bg-success w-100 text-white"
+                    onClick={() =>
+                      location.pathname !== '/cart' &&
+                      location.pathname !== `/product/${item?._id}`
+                        ? handlequantity(item)
+                        : handlequantity(item, item?.quantity + 1)
+                    }
+                  >
+                    Add
+                  </Button>{' '}
+                </div>
+              )}
             </div>
           )}
         </Col>
@@ -147,67 +153,128 @@ const ItemCard = ({ item, handlequantity, quantity, kitchenData }) => {
 
             {/* Pounded Yam */}
 
-            {productList &&
-              productList?.map((product) => (
-                <Row
-                  key={product._id}
-                  className="bg-info rounded pb-1 align-items-center mb-2"
+            {item?.extras && item?.extras.length > 0 ? (
+              <Row
+                key={item._id}
+                className="bg-info rounded pb-1 align-items-center mb-2"
+              >
+                <select
+                  value={selectedExtras[item._id] || ''}
+                  onChange={(e) =>
+                    setSelectedExtras({
+                      ...selectedExtras,
+                      [item._id]: e.target.value,
+                    })
+                  }
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    outline: 'none',
+                  }}
                 >
-                  <select
-                    value={selectedExtras[product._id] || ''}
-                    onChange={(e) =>
-                      setSelectedExtras({
-                        ...selectedExtras,
-                        [product._id]: e.target.value,
+                  {item?.extras?.map((i) => (
+                    <option key={i._id} value={i._id}>
+                      {i.item} (₦{i.price})
+                    </option>
+                  ))}
+                </select>
+
+                <div style={{ height: '30px' }}>
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    onClick={() =>
+                      removeExtraQuantity({
+                        newExtraItem: item,
+                        extraId: selectedExtras[item._id],
                       })
                     }
-                    style={{
-                      background: 'transparent',
-                      border: 'none',
-                      outline: 'none',
-                    }}
                   >
-                    {product?.extras?.map((i) => (
-                      <option key={i._id} value={i._id}>
-                        {i.item} (₦{i.price})
-                      </option>
-                    ))}
-                  </select>
-
-                  <div style={{ height: '30px' }}>
+                    -
+                  </Button>{' '}
+                  <span className="mx-2">
+                    {getCartQuantity({
+                      productId: item?._id,
+                      extraId: selectedExtras[item._id],
+                    })}
+                  </span>
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    onClick={() =>
+                      extraQuantity({
+                        newExtraItem: item,
+                        extraId: selectedExtras[item._id],
+                      })
+                    }
+                  >
+                    +
+                  </Button>
+                </div>
+              </Row>
+            ) : (
+              <div>
+                {cartItems?.find((i) => i._id === item?._id) ? (
+                  <div className="d-flex align-items-center gap-1">
+                    {' '}
                     <Button
-                      variant="outline-secondary"
-                      size="sm"
+                      style={{
+                        width: '30px',
+                        height: '30px',
+                        borderRadius: '50%',
+                      }}
+                      variant="success"
+                      className=" bg-success d-flex justify-content-center align-items-center fs-3 text-white"
+                      disabled={item?.quantity === 1}
                       onClick={() =>
-                        removeExtraQuantity({
-                          newExtraItem: product,
-                          extraId: selectedExtras[product._id],
-                        })
+                        location.pathname !== '/cart' &&
+                        location.pathname !== `/product/${item?._id}`
+                          ? handlequantity(item, item?._id)
+                          : handlequantity(item, item?.quantity - 1)
                       }
                     >
                       -
                     </Button>{' '}
-                    <span className="mx-2">
-                      {getCartQuantity({
-                        productId: product?._id,
-                        extraId: selectedExtras[product._id],
-                      })}
-                    </span>
+                    {quantity(item)}
                     <Button
-                      variant="outline-secondary"
-                      size="sm"
+                      style={{
+                        width: '30px',
+                        height: '30px',
+                        borderRadius: '50%',
+                      }}
+                      variant="success"
+                      className=" bg-success d-flex justify-content-center align-items-center fs-4 text-white"
                       onClick={() =>
-                        extraQuantity({
-                          newExtraItem: product,
-                          extraId: selectedExtras[product._id],
-                        })
+                        location.pathname !== '/cart' &&
+                        location.pathname !== `/product/${item?._id}`
+                          ? handlequantity(item)
+                          : handlequantity(item, item?.quantity + 1)
                       }
                     >
                       +
-                    </Button>
+                    </Button>{' '}
                   </div>
-                </Row>
-              ))}
+                ) : (
+                  <div className="w-100">
+                    <Button
+                      style={{
+                        borderRadius: '10px',
+                      }}
+                      variant="success"
+                      className=" bg-success w-100 text-white"
+                      onClick={() =>
+                        location.pathname !== '/cart' &&
+                        location.pathname !== `/product/${item?._id}`
+                          ? handlequantity(item)
+                          : handlequantity(item, item?.quantity + 1)
+                      }
+                    >
+                      Add
+                    </Button>{' '}
+                  </div>
+                )}
+              </div>
+            )}
           </Card.Body>
         </Col>
       </Row>

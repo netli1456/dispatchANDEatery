@@ -19,6 +19,7 @@ import DoneAllIcon from '@mui/icons-material/DoneAll';
 import DoNotDisturbOffIcon from '@mui/icons-material/DoNotDisturbOff';
 import UploadProduct from '../upload/UploadProduct';
 import VendorRegistration from '../component/VendorRegistration';
+import { Col, Row } from 'react-bootstrap';
 
 const Profile = () => {
   const [data, setData] = useState([]);
@@ -151,69 +152,74 @@ const Profile = () => {
 
         <SearchBar />
         <div className="my-3 ">
-          <div className="text-center p-3 flex-wrap d-flex align-items-center justify-content-between mb-3 border-bottom border-grey">
-            {' '}
-            <Button
-              variant="light"
-              onClick={() => handleQuery('pending')}
-              className={
-                query === 'pending'
-                  ? 'text-danger fw-bold  border-bottom'
-                  : 'text-success  '
-              }
-            >
-              Pending(
-              {counts.pending > 0 ? counts?.pending : 0})
-            </Button>
-            <Button
-              variant="light"
-              onClick={() => handleQuery('dispatched')}
-              className={
-                query === 'dispatched'
-                  ? 'text-danger fw-bold  border-bottom'
-                  : 'text-success'
-              }
-            >
-              Dispatched(
-              {counts.dispatched > 0 ? counts?.dispatched : 0})
-            </Button>
-            <Button
-              variant="light"
-              onClick={() => handleQuery('delivered')}
-              className={
-                query === 'delivered'
-                  ? 'text-danger fw-bold  border-bottom'
-                  : 'text-success  '
-              }
-            >
-              Delivered(
-              {counts?.delivered > 0 ? counts?.delivered : 0})
-            </Button>
-            <Button
-              variant="light"
-              onClick={() => handleQuery('refunded')}
-              className={
-                query === 'refunded'
-                  ? 'text-danger fw-bold  border-bottom'
-                  : 'text-success  '
-              }
-            >
-              Refunded(
-              {counts.refunded > 0 ? counts?.refunded : 0})
-            </Button>
-            <Button
-              variant="light"
-              onClick={() => handleQuery('all')}
-              className={
-                query === 'all'
-                  ? 'text-danger fw-bold  border-bottom'
-                  : 'text-success  '
-              }
-            >
-              View All(
-              {counts?.all > 0 ? counts?.all : 0})
-            </Button>
-          </div>
+          <Row className="g-2 mb-3 border-bottom border-grey flex-wrap">
+            <Col xs="auto">
+              <Button
+                variant="light"
+                onClick={() => handleQuery('pending')}
+                className={
+                  query === 'pending'
+                    ? 'text-danger order-button-text  fw-bold border-bottom'
+                    : 'text-success order-button-text'
+                }
+              >
+                Pending({counts.pending > 0 ? counts.pending : 0})
+              </Button>
+            </Col>
+            <Col xs="auto">
+              <Button
+                variant="light"
+                onClick={() => handleQuery('dispatched')}
+                className={
+                  query === 'dispatched'
+                    ? 'text-danger fw-bold border-bottom order-button-text'
+                    : 'text-success order-button-text'
+                }
+              >
+                Dispatched({counts.dispatched > 0 ? counts.dispatched : 0})
+              </Button>
+            </Col>
+            <Col xs="auto">
+              <Button
+                variant="light"
+                onClick={() => handleQuery('delivered')}
+                className={
+                  query === 'delivered'
+                    ? 'text-danger fw-bold border-bottom order-button-text'
+                    : 'text-success order-button-text'
+                }
+              >
+                Delivered({counts.delivered > 0 ? counts.delivered : 0})
+              </Button>
+            </Col>
+            <Col xs="auto ">
+              <Button
+                variant="light"
+                onClick={() => handleQuery('refunded')}
+                className={
+                  query === 'refunded'
+                    ? 'text-danger order-button-text fw-bold border-bottom'
+                    : 'text-success order-button-text'
+                }
+              >
+                Refunded({counts.refunded > 0 ? counts.refunded : 0})
+              </Button>
+            </Col>
+            <Col xs="auto">
+              <Button
+                variant="light"
+                onClick={() => handleQuery('all')}
+                className={
+                  query === 'all'
+                    ? 'text-danger order-button-text fw-bold border-bottom'
+                    : 'text-success order-button-text'
+                }
+              >
+                View All({counts.all > 0 ? counts.all : 0})
+              </Button>
+            </Col>
+          </Row>
+
           {data?.orders?.length === 0 ? (
             <div className="text-center my-5">
               {' '}
@@ -246,6 +252,32 @@ const Profile = () => {
                           />
                         </div>
 
+                        {item?.isPaid ? (
+                          <div
+                            className="bg-light text-success px-2 "
+                            style={{
+                              position: 'absolute',
+                              top: 2,
+                              left: 6,
+                              borderRadius: '20px',
+                            }}
+                          >
+                            Paid <DoneAllIcon className="text-success" />
+                          </div>
+                        ) : (
+                          <div
+                            className="bg-success bold text-white px-2 "
+                            style={{
+                              position: 'absolute',
+                              top: 2,
+                              left: 6,
+                              borderRadius: '20px',
+                            }}
+                          >
+                            Pay Now 
+                          </div>
+                        )}
+
                         <div className="fw-bold d-flex gap-1 flex-wrap">
                           {item?.content?.slice(0, 3).map((content, index) => (
                             <div className="text-dark" key={index}>
@@ -271,6 +303,7 @@ const Profile = () => {
                             </div>
                           ))}
                         </div>
+
                         <div className="opacity-40">
                           {item?.isDelivered ? (
                             <span

@@ -80,7 +80,6 @@ function Kitchen() {
     handleSearch();
   }, [query, category, price, page, id]);
 
-  console.log('kitchendata', kitchenData);
 
   useEffect(() => {
     const screenSieze = () => {
@@ -422,8 +421,8 @@ function Kitchen() {
                                   <div style={{ position: 'relative' }}>
                                     <div
                                       style={{
-                                        maxHeight: '270px',
-                                        minHeight: '270px',
+                                        maxHeight: '230px',
+                                        minHeight: '230px',
                                       }}
                                       className="text-decoration-none rounded kitchhovering"
                                       key={`${item._id}-${index}`}

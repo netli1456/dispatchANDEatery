@@ -20,9 +20,9 @@ const productSchema = new mongoose.Schema(
     visibility: { type: String },
     extras: [
       {
-        item: { type: String, required: true },
-        price: { type: Number, required: true },
-        limit: { type: Number, required: true },
+        item: { type: String, },
+        price: { type: Number, },
+        limit: { type: Number, },
       },
     ],
   },

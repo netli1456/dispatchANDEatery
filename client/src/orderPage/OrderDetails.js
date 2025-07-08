@@ -17,6 +17,7 @@ function OrderDetails({ data, smallScreen, loading }) {
                   to={`/product/${item?.productId}`}
                   className="parentorder d-flex align-items-center gap-3"
                 >
+                  
                   <div className={smallScreen ? 'list box6' : 'box1 list'}>
                     <img src={item.img} alt="" />
                   </div>

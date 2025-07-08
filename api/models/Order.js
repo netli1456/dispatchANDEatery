@@ -34,7 +34,7 @@ const orderSchema = new mongoose.Schema(
     reference: { type: String },
     extras: [
       {
-        item: { type: String, required: true },
+        item: { type: String},
       },
     ],
   },

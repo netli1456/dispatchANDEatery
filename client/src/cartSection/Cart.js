@@ -50,8 +50,7 @@ function Cart() {
 
   const handleOrder = async () => {
     setLoading(true);
-    const extras = cartItems?.map((item) => item.extras)?.map((i)=> i.filter((e) => e.quantity > 0));
-    console.log('flat extras', extras);
+    const extras = cartItems?.map((item) => item.extras)?.map((i)=> i?.filter((e) => e.quantity > 0));
     try {
       if (userInfo?.user?._id) {
         const { data } = await axios.post(
@@ -95,7 +94,7 @@ function Cart() {
         });
       } else {
         toast.error(error.response.data.message, {
-          autoClose: false,
+          autoClose: true,
           theme: 'colored',
           toastId: 'unique-toast-id',
         });

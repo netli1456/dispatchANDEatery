@@ -14,14 +14,16 @@ export const CreateOrder = async (req, res) => {
     }
 
     const orderedItems = req.body.orderedItems;
+    const extras = req.body.extras;
     if (customer._id.toString() !== businessId) {
-
-      const extraItems = extras.flat().map((item)=>{
-            return {
-              item: `${item.quantity} ${item.item} ${item.price} naira each` ,
-            
-            }
-          })
+      const extraItems =
+         extras && extras.length > 0 && extras[0] !== null
+          ? extras.flat().map((item) => {
+              return {
+                item: `${item.quantity} ${item.item} ${item.price} naira each`,
+              };
+            })
+          : [];
       // if (customer.balance >= req.body.total) {
       if (orderedItems) {
         const singleItem = orderedItems.map((item) => {
@@ -34,7 +36,6 @@ export const CreateOrder = async (req, res) => {
             category: item.category,
           };
         });
-   
 
         const business = await User.findById(businessId);
         if (business) {
@@ -45,14 +46,6 @@ export const CreateOrder = async (req, res) => {
           }
         }
 
-        const extras = req.body.extras 
-       
-        
-          
-
-          
-        
-
         const order = new Order({
           ...req.body,
           orderedItems: singleItem,
@@ -62,7 +55,7 @@ export const CreateOrder = async (req, res) => {
           total: req.body.total,
           subtotal: req.body.subtotal,
           shippingFee: req.body.shippingFee,
-          extras: extraItems
+          extras: extraItems,
         });
 
         const ordered = await order.save();
@@ -86,7 +79,6 @@ export const CreateOrder = async (req, res) => {
         await transactionHistory.save();
         return res.status(200).json({ _id: order._id });
       }
-     
     } else {
       return res
         .status(403)
@@ -108,7 +100,6 @@ export const verifyPayment = async (req, res) => {
         },
       }
     );
-
 
     if (data.status === true) {
       return res.status(200).json({ success: true });
