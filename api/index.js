@@ -31,6 +31,7 @@ app.use(
       'https://localhost',
       'capacitor://localhost',
       'https://bite-5irv.onrender.com',
+      'https://biteapi.onrender.com',
       'https://www.naijaeateries.com',
     ],
     credentials: true,
