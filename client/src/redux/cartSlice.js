@@ -52,7 +52,7 @@ export const cartSlice = createSlice({
     //   }
     // },
 
-    addExtras: (state, action) => {
+    addExtrass: (state, action) => {
   const { newExtraItem, extraId } = action.payload;
   const existItem = state.cartItems.find(
     (item) => item._id === newExtraItem._id
@@ -73,6 +73,31 @@ export const cartSlice = createSlice({
         quantity: 1,
       });
     }
+  }
+},
+   
+addExtras: (state, action) => {
+  const { newExtraItem, extraId } = action.payload;
+  console.log(extraId, 'new extra item');
+  const existItem = state.cartItems.find(
+    (item) => item?._id === newExtraItem?._id
+  );
+
+
+  if (!existItem) 
+    return ;
+
+  const existExtra = existItem.extras.find(
+    (extra) => extra._id === extraId
+  );
+
+  if (!existExtra) return;
+
+  // initialize if not present
+  if (!existExtra.quantity) {
+    existExtra.quantity = 1;
+  } else if (existExtra.quantity < existExtra.limit) {
+    existExtra.quantity += 1;
   }
 },
 

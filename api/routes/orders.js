@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   CreateOrder,
+  getPopularItems,
   getSingleOrder,
   orderedItems,
   refundAndCancelOrder,
@@ -14,13 +15,13 @@ const OrderRouter = express.Router();
 
 OrderRouter.post(
   '/:fingerprint/:buyerId/:businessId',
-  authMiddleware,
+  
   CreateOrder
 );
-OrderRouter.get('/:fingerprint/allorders/:id', authMiddleware, orderedItems);
+OrderRouter.get('/:fingerprint/allorders/:id',  orderedItems);
 OrderRouter.get(
   '/:fingerprint/find/:orderId/:id',
-  authMiddleware,
+ 
   getSingleOrder
 );
 OrderRouter.put(
@@ -35,5 +36,6 @@ OrderRouter.put(
 );
 
 OrderRouter.post('/pay', updatePayment )
+OrderRouter.get('/popular/:id', getPopularItems )
 
 export default OrderRouter;

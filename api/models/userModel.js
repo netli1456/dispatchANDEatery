@@ -27,8 +27,11 @@ const userSchema = new mongoose.Schema(
     isBusinessOwner: { type: Boolean, default: false },
     lga: { type: String },
     otp: { type: String },
-    
-
+    category: { type: String },
+    minOrder: { type: Number, default: 200 },
+    reviews: { type: Number, default:0 },
+    deliveryTime: { type: Number, default: 45 },
+    tag: { type: String },
     otpIsVerified: { type: Boolean, default: false },
     otpCreatedAt: {
       type: Date,
@@ -36,7 +39,7 @@ const userSchema = new mongoose.Schema(
     },
     placesCanDeliverTo: { type: Array, default: [] },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 export default User;

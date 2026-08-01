@@ -43,7 +43,7 @@ function UploadProduct(props) {
   const navigate = useNavigate();
   const fingerprint = useFingerprint();
   const { setUploadOpen, businessImg, businessName } = props;
-
+  const [loading, setLoading] = useState(false);
 
 
   
@@ -176,16 +176,21 @@ function UploadProduct(props) {
     }
   };
 
-  console.log('extra now', extras)
 
   const handleUploadProduct = async (e) => {
     e.preventDefault();
-
+     setLoading(true);
     const formData = new FormData();
 
+    // imgs.forEach((img) => {
+    //   formData.append('imgs', img);
+    // });
+
     imgs.forEach((img) => {
-      formData.append('imgs', img);
-    });
+  console.log('img:', img);
+  console.log('type:', img.type);
+  formData.append('imgs', img);
+});
 
     formData.append('name', name);
     formData.append('type', type);
@@ -194,7 +199,7 @@ function UploadProduct(props) {
     formData.append('price', price);
     formData.append('content', JSON.stringify(contents));
     formData.append('visibility', visibility);
-    formData.append('extras', JSON.stringify(extras))
+    // formData.append('extras', JSON.stringify(extras))
 
     try {
       const { data } = await axios.post(
@@ -203,7 +208,7 @@ function UploadProduct(props) {
       );
 
       setData(data);
-
+     
       toast.success(
         <div>
           <p>Upload successful!</p>
@@ -228,7 +233,7 @@ function UploadProduct(props) {
       );
     } catch (error) {
       toast.error(error, {toastId:'unique-toast-id'})
-      console.error('Error during form submission:', error);
+      console.log('Error during form submission:', error);
     }
   };
 
@@ -466,7 +471,7 @@ function UploadProduct(props) {
             setType
           )}
 
-          <Extra type={type} cat={category} extras={extras} setExtras={ setExtras}/>
+          {/* <Extra type={type} cat={category} extras={extras} setExtras={ setExtras}/> */}
           <div className="d-flex flex-column my-4">
             <Form.Label className="fw-bold border-secondary text-center border-bottom">
               Contents

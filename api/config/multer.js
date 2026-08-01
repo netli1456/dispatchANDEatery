@@ -5,6 +5,7 @@ import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
 export const validateFileType = (req, res, next) => {
   // Configure Multer with memory storage
+
   const upload = multer({
     storage: multer.memoryStorage(), // Files are stored in memory temporarily
   }).array('imgs', 5); // Adjust the field name and limit as needed
@@ -14,6 +15,11 @@ export const validateFileType = (req, res, next) => {
     if (err) {
       return res.status(400).json({ message: 'File upload error' });
     }
+
+    console.log(
+      'File mimetypes:',
+      req.files.map((file) => file.mimetype)
+    );
 
     // Now validate the file types after Multer stores them in memory
     const allowedMimeTypes = [
@@ -56,9 +62,7 @@ export const storage = new CloudinaryStorage({
   params: {
     folder: folders, // Hardcoded for testing
     allowed_formats: ['jpg', 'png', 'webp', 'jpeg'],
-  
   },
 });
 
 export const upload = multer({ storage: storage });
-

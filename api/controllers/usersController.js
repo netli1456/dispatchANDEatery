@@ -626,23 +626,19 @@ export const getStores = async (req, res) => {
 
     if (query) {
       // If a query is provided, prioritize it
-      storesQuery = storesQuery.or([{ businessName: { $regex: query, $options: 'i' } }]);
+      storesQuery = storesQuery.or([
+        { businessName: { $regex: query, $options: 'i' } },
+      ]);
     }
-   
-   
 
     if (searchedLocation) {
       if (query) {
-        storesQuery.or( [
-          { businessName: { $regex: query, $options: 'i' } },
-        ]);
-       
+        storesQuery.or([{ businessName: { $regex: query, $options: 'i' } }]);
       } else if (rating) {
         filteredStores.sort({ rating: -1 });
-        const result = await User.find(searchConditions)
-        stores =result
+        const result = await User.find(searchConditions);
+        stores = result;
       } else if (popularFilter) {
-        
         const products = await Product.find({
           $or: [
             { type: { $regex: popularFilter, $options: 'i' } },
@@ -656,7 +652,9 @@ export const getStores = async (req, res) => {
             storesQuery.or({
               _id: product.userId.toString(),
               $or: [
-                { physicalAddress: { $regex: searchedLocation, $options: 'i' } },
+                {
+                  physicalAddress: { $regex: searchedLocation, $options: 'i' },
+                },
                 {
                   placesCanDeliverTo: {
                     $regex: searchedLocation,
@@ -665,26 +663,17 @@ export const getStores = async (req, res) => {
                 },
               ],
             });
-           
           }
         }
-
-       
       } else {
         storesQuery.or([
           { physicalAddress: { $regex: searchedLocation, $options: 'i' } },
           { placesCanDeliverTo: { $regex: searchedLocation, $options: 'i' } },
         ]);
       }
-     
     }
 
-  
-
-  
-
     if (popularFilter) {
-
       const products = await Product.find({
         $or: [
           { type: { $regex: popularFilter, $options: 'i' } },
@@ -695,24 +684,19 @@ export const getStores = async (req, res) => {
 
       if (products.length > 0) {
         for (const product of products) {
-          storesQuery.or({_id:product.userId.toString()});
-          
+          storesQuery.or({ _id: product.userId.toString() });
         }
       }
-
-     
     }
     if (storesQuery.length === 0)
       return res.status(200).json({ message: 'no stores found' });
     let stores = await storesQuery;
 
-    if(!stores) return res.status(404).json({ message:'No stores found'})
+    if (!stores) return res.status(404).json({ message: 'No stores found' });
 
-    
     if (rating) {
-      stores = stores.filter(store => store.rating >= ratingNumber);
+      stores = stores.filter((store) => store.rating >= ratingNumber);
     }
-    
 
     let filteredStores = stores.map((store) => ({
       businessName: store.businessName,
@@ -724,9 +708,12 @@ export const getStores = async (req, res) => {
       deliveryRate: store.deliveryRate,
       physicalAddress: store.physicalAddress,
       timeOpen: store.timeOpen,
+      category: store.category,
+      minOrder: store.minOrder,
+      reviews: store.reviews,
+      deliveryTime: store.deliveryTime,
+      tag: store.tag,
     }));
-
-
 
     const startIndex = (page - 1) * parseInt(pageSize);
     const endIndex = startIndex + parseInt(pageSize);
@@ -754,9 +741,6 @@ export const getStores = async (req, res) => {
 };
 
 //VENDOR REGISTRATION
-
-
-
 
 export const vendorRegistration = async (req, res) => {
   try {

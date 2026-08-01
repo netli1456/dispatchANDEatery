@@ -12,6 +12,8 @@ import cookieParser from 'cookie-parser';
 import { authMiddleware } from './middleWareAuth/midleware.js';
 import userRouter from './routes/userRoutes.js';
 import paymentRouter from './routes/payStack.js';
+import soupRouter from './routes/soups.js';
+import locationrouter from './routes/locations.js';
 
 dotenv.config();
 const app = express();
@@ -41,7 +43,8 @@ app.use(
     optionsSuccessStatus: 204,
   })
 );
-
+app.use('/api/locations', locationrouter);
+app.use('/api/soup', soupRouter);
 app.use('/api/pay', paymentRouter);
 app.use('/api/users', userRouter);
 app.use('/api/products', productRouter);

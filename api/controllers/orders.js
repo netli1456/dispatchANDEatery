@@ -1,7 +1,9 @@
+import mongoose from 'mongoose';
 import Order from '../models/Order.js';
 import TransactionHistory from '../models/TransactionHistory.js';
 import User from '../models/userModel.js';
 import axios from 'axios';
+import Product from '../models/Product.js';
 
 export const CreateOrder = async (req, res) => {
   try {
@@ -17,7 +19,7 @@ export const CreateOrder = async (req, res) => {
     const extras = req.body.extras;
     if (customer._id.toString() !== businessId) {
       const extraItems =
-         extras && extras.length > 0 && extras[0] !== null
+        extras && extras.length > 0 && extras[0] !== null
           ? extras.flat().map((item) => {
               return {
                 item: `${item.quantity} ${item.item} ${item.price} naira each`,
@@ -98,7 +100,7 @@ export const verifyPayment = async (req, res) => {
         headers: {
           Authorization: `Bearer sk_test_93ff512391edb83ec12dd6039672ae779da50506`,
         },
-      }
+      },
     );
 
     if (data.status === true) {
@@ -310,7 +312,7 @@ export const takeOrder = async (req, res) => {
       {
         isTaken: Date.now(),
       },
-      { new: true }
+      { new: true },
     );
     res.status(200).json(takenOrder.isTaken);
   } catch (error) {
@@ -343,7 +345,7 @@ export const refundAndCancelOrder = async (req, res) => {
           isCancelled: true,
           isTaken: Date.now(),
         },
-        { new: true }
+        { new: true },
       );
 
       user.balance = user.balance - order.total;
@@ -358,5 +360,163 @@ export const refundAndCancelOrder = async (req, res) => {
     }
   } catch (error) {
     res.status(404).json({ message: error.message });
+  }
+};
+
+
+
+export const getPopularItems = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "Invalid businessId" });
+    }
+
+    const now = new Date();
+
+    const last24h = new Date(now - 24 * 60 * 60 * 1000);
+    const last7d = new Date(now - 7 * 24 * 60 * 60 * 1000);
+    const last14d = new Date(now - 14 * 24 * 60 * 60 * 1000);
+    const last30d = new Date(now - 30 * 24 * 60 * 60 * 1000);
+
+    // 🔥 AGGREGATE SALES (FIXED TO MATCH YOUR SCHEMA)
+    const sales = await Order.aggregate([
+      {
+        $match: {
+          businessId: id, // ✅ string (matches your schema)
+          createdAt: { $gte: last30d },
+        },
+      },
+      { $unwind: "$orderedItems" }, // ✅ correct field
+      {
+        $group: {
+          _id: "$orderedItems.productId", // ✅ string productId
+          totalSold: { $sum: "$orderedItems.quantity" },
+
+          sales24h: {
+            $sum: {
+              $cond: [
+                { $gte: ["$createdAt", last24h] },
+                "$orderedItems.quantity",
+                0,
+              ],
+            },
+          },
+
+          sales7d: {
+            $sum: {
+              $cond: [
+                { $gte: ["$createdAt", last7d] },
+                "$orderedItems.quantity",
+                0,
+              ],
+            },
+          },
+
+          sales14d: {
+            $sum: {
+              $cond: [
+                { $gte: ["$createdAt", last14d] },
+                "$orderedItems.quantity",
+                0,
+              ],
+            },
+          },
+        },
+      },
+    ]);
+
+    // 🔍 PICK BEST DATASET
+    const pickDataset = () => {
+      let filtered;
+
+      filtered = sales.filter((i) => i.sales24h > 0);
+      if (filtered.length) {
+        return {
+          type: "24h",
+          data: filtered.sort((a, b) => b.sales24h - a.sales24h),
+        };
+      }
+
+      filtered = sales.filter((i) => i.sales7d > 0);
+      if (filtered.length) {
+        return {
+          type: "7d",
+          data: filtered.sort((a, b) => b.sales7d - a.sales7d),
+        };
+      }
+
+      filtered = sales.filter((i) => i.sales14d > 0);
+      if (filtered.length) {
+        return {
+          type: "14d",
+          data: filtered.sort((a, b) => b.sales14d - a.sales14d),
+        };
+      }
+
+      if (sales.length) {
+        return {
+          type: "30d",
+          data: sales.sort((a, b) => b.totalSold - a.totalSold),
+        };
+      }
+
+      return null;
+    };
+
+    const result = pickDataset();
+
+let selectedItems = [];
+let showLink = false;
+let fullProducts = [];
+
+if (result && result.data && result.data.length > 0) {
+  const { type, data } = result;
+
+  if (type === "24h") {
+    if (data.length > 5 || data.length >= 3) {
+      selectedItems = data.slice(0, 2);
+      showLink = true;
+    } else {
+      selectedItems = data.slice(0, 2);
+    }
+  } else {
+    selectedItems = data.slice(0, 2);
+  }
+
+  const productIds = selectedItems.map(
+    (p) => new mongoose.Types.ObjectId(p._id)
+  );
+
+  fullProducts = await Product.find({
+    _id: { $in: productIds },
+    userId: id,
+  });
+}
+
+// 🔥 IMPORTANT FALLBACK (this is what you were missing)
+if (!fullProducts.length) {
+  const newest = await Product.find({
+    userId: id,
+  })
+    .sort({ createdAt: -1 })
+    .limit(5);
+
+  return res.json({
+    type: "newest",
+    showLink: false,
+    products: newest,
+  });
+}
+
+return res.json({
+  type: result.type,
+  showLink,
+  products: fullProducts,
+});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error fetching popular items" });
   }
 };

@@ -1,285 +1,257 @@
-import { useEffect, useState } from 'react';
-import { Card, Button, Row, Col } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLocation } from 'react-router-dom';
-import { addExtras, removeExtras } from '../redux/cartSlice';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation } from "react-router-dom";
+import {  addExtras, removeExtras } from "../redux/cartSlice";
 
-const ItemCard = ({ item, handlequantity, quantity, kitchenData }) => {
+export default function ItemCard({ item, handlequantity, kitchenData }) {
   const [selectedExtras, setSelectedExtras] = useState({});
 
   const location = useLocation();
-
   const { cartItems } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
 
-  const extraQuantity = ({ newExtraItem, extraId }) => {
-    if (cartItems?.length > 0) {
-      const existItem = cartItems?.find((i) => i._id === newExtraItem._id);
-      if (existItem) {
-        dispatch(addExtras({ newExtraItem: existItem, extraId: extraId }));
-      }
+  const currentQty =
+    cartItems.find((i) => i?._id === item?._id)?.quantity || 0;
+
+  const extraQuantity = ({ newExtraItem, extraId }) => { 
+    
+
+   
+    dispatch(addExtras({ newExtraItem, extraId }));
+
+  };
+
+  const removeExtraQuantity = ({ newExtraItem, extraId }) => {
+    const existItem = cartItems?.find((i) => i._id === newExtraItem._id);
+    if (existItem) {
+      dispatch(removeExtras({ newExtraItem: existItem, extraId }));
     }
   };
 
+
+
+
   const getCartQuantity = ({ productId, extraId }) => {
-    const product = cartItems.find((item) => item._id === productId);
+    const product = cartItems?.find((item) => item._id === productId);
     const extra = product?.extras?.find((e) => e._id === extraId);
     return extra?.quantity || 0;
   };
 
-  const removeExtraQuantity = ({ newExtraItem, extraId }) => {
-    if (cartItems?.length > 0) {
-      const existItem = cartItems.find((i) => i._id === newExtraItem._id);
-      if (existItem) {
-        dispatch(removeExtras({ newExtraItem: existItem, extraId }));
-      }
-    }
-  };
-
-  const productList = kitchenData?.products || cartItems || [];
-
   useEffect(() => {
-    if (Object.keys(selectedExtras).length > 0) return; // Do nothing if already set
+  
+    if(selectedExtras[0]){
+      getCartQuantity()
+    }
+  },[selectedExtras])
 
-    const initialSelections = {};
-    productList?.forEach((product) => {
-      const cartItem = cartItems.find((item) => item._id === product._id);
+  // Initialize selected extra only once per item (prevents infinite loops)
+  // useEffect(() => {
+  //   if (selectedExtras[item._id]) return;
 
-      if (cartItem?.extras?.length > 0) {
-        const selected = cartItem.extras.find((ex) => ex.quantity > 0);
-        if (selected) {
-          initialSelections[product._id] = selected._id;
-        }
-      } else if (product?.extras?.length > 0) {
-        initialSelections[product._id] = product.extras[0]._id;
-      }
-    });
+  //   const cartItem = cartItems.find((i) => i._id === item._id);
 
-    setSelectedExtras(initialSelections);
-  }, [productList, cartItems]);
+  //   let selectedId = "";
+
+  //   if (cartItem?.extras?.length > 0) {
+  //     const selected = cartItem.extras.find((ex) => ex.quantity > 0);
+  //     if (selected) selectedId = selected._id;
+  //   } else if (item?.extras?.length > 0) {
+  //     selectedId = item.extras[0]._id;
+  //   }
+
+  //   if (selectedId) {
+  //     setSelectedExtras((prev) => ({
+  //       ...prev,
+  //       [item._id]: selectedId,
+  //     }));
+  //   }
+  // }, [item._id, cartItems]);
+
+
+
+
+
+//   const addExtras = ({ itemId, extraItemId }) => {
+//   const item = cartItems.find((i) => i._id === itemId);
+
+//   if (!item) return;
+
+//   const updatedExtras = item.extras.map((exItem) =>
+//     exItem._id === extraItemId
+//       ? { ...exItem, quantity: exItem.quantity + 1 }
+//       : exItem
+//   );
+
+//   dispatch(
+//     addCart({
+//       ...item,
+//       extras: updatedExtras,
+//     })
+//   );
+// };
 
   return (
-    <Card
-      style={{ borderRadius: '15px', minHeight: '220px', maxHeight: '220px' }}
-      className={
-        location.pathname === '/cart' ? 'p-3  border-0' : 'p-3  shadow'
-      }
+    <div
+      className={`rounded-2xl min-h-[185px] p-3 ${
+        location.pathname === "/cart"
+          ? "border-0"
+          : "shadow-md"
+      } bg-white`}
     >
-      <Row>
-        <Col xs={4}>
-          <Link to={`/product/${item._id}`} className=" ">
-            <img style={{ width: '100%', maxHeight:'120px' }} src={item?.imgs[0]?.url} alt={''} />
+      <div className="flex gap-3 h-full">
+        {/* LEFT */}
+        <div className="w-1/3 flex flex-col">
+          <Link to={`/product/${item._id}`}>
+            <img
+              className="w-full h-[110px] object-cover rounded-lg"
+              src={item?.imgs?.[0]?.url}
+              alt=""
+            />
           </Link>
-          <h6 className="my-2 text-success">N{item?.price?.toFixed(2)}</h6>
-          {item?.extras && item?.extras.length > 0 && (
-            <div>
-              {cartItems?.find((i) => i._id === item?._id) ? (
-                <div className="d-flex align-items-center gap-1">
-                  {' '}
-                  <Button
-                    style={{
-                      width: '30px',
-                      height: '30px',
-                      borderRadius: '50%',
-                    }}
-                    variant="success"
-                    className=" bg-success d-flex justify-content-center align-items-center fs-3 text-white"
-                    disabled={item?.quantity === 1}
-                    onClick={() =>
-                      location.pathname !== '/cart' &&
-                      location.pathname !== `/product/${item?._id}`
-                        ? handlequantity(item, item?._id)
-                        : handlequantity(item, item?.quantity - 1)
-                    }
+
+          <p className="mt-2 text-sm font-semibold text-gray-700">
+            ₦{item?.price?.toFixed(2)}
+          </p>
+
+          {/* Quantity (with extras) */}
+          {item?.extras?.length > 0 && (
+            <div className="mt-auto">
+              {cartItems.find((i) => i._id === item._id) ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    disabled={currentQty === 1}
+                    onClick={() => handlequantity(item, currentQty - 1)}
+                    className="w-10 h-10 border rounded-lg text-xl"
                   >
                     -
-                  </Button>{' '}
-                  {quantity(item)}
-                  <Button
-                    style={{
-                      width: '30px',
-                      height: '30px',
-                      borderRadius: '50%',
-                    }}
-                    variant="success"
-                    className=" bg-success d-flex justify-content-center align-items-center fs-4 text-white"
-                    onClick={() =>
-                      location.pathname !== '/cart' &&
-                      location.pathname !== `/product/${item?._id}`
-                        ? handlequantity(item)
-                        : handlequantity(item, item?.quantity + 1)
-                    }
+                  </button>
+
+                  <span className="text-lg font-medium">
+                    {currentQty}
+                  </span>
+
+                  <button
+                    onClick={() => handlequantity(item, currentQty + 1)}
+                    className="w-10 h-10 border rounded-lg text-xl"
                   >
                     +
-                  </Button>{' '}
+                  </button>
                 </div>
               ) : (
-                <div className="w-100">
-                  <Button
-                    style={{
-                      borderRadius: '10px',
-                    }}
-                    variant="success"
-                    className=" bg-success w-100 text-white"
-                    onClick={() =>
-                      location.pathname !== '/cart' &&
-                      location.pathname !== `/product/${item?._id}`
-                        ? handlequantity(item)
-                        : handlequantity(item, item?.quantity + 1)
-                    }
-                  >
-                    Add
-                  </Button>{' '}
-                </div>
+                <button
+                  onClick={() => handlequantity(item, 1)}
+                  className="w-full bg-green-600 text-white rounded-lg py-2"
+                >
+                  Add
+                </button>
               )}
             </div>
           )}
-        </Col>
-        <Col xs={8}>
-          <Card.Body className="p-0">
-            <Card.Title
-              className="mb-1"
-              style={{ fontSize: '1rem', fontWeight: '600' }}
-            >
+        </div>
+
+        {/* RIGHT */}
+        <div className="w-2/3 flex flex-col justify-between">
+          <div>
+            <h3 className="font-semibold text-sm">
               {item?.name?.length > 35
-                ? `${item?.name?.slice(0, 35)}...`
-                : item?.name}
-            </Card.Title>
-            <Card.Text>
-              {item?.desc?.length > 60
-                ? `${item?.desc?.slice(0, 60)}...`
-                : item?.desc}
-            </Card.Text>
+                ? `${item.name.slice(0, 35)}...`
+                : item.name}
+            </h3>
 
-            {/* Pounded Yam */}
+            <p className="text-xs text-gray-500">
+              {item?.desc?.length > 40
+                ? `${item.desc.slice(0, 40)}...`
+                : item.desc}
+            </p>
+          </div>
 
-            {item?.extras && item?.extras.length > 0 ? (
-              <Row
-                key={item._id}
-                className="bg-info rounded pb-1 align-items-center mb-2"
+          {/* Extras */}
+          {item?.extras?.length > 0 ? (
+            <div className="border rounded-lg p-2">
+              <select
+                className="w-full bg-transparent outline-none text-sm"
+                value={selectedExtras[item._id] || ""}
+                onChange={(e) =>
+                  setSelectedExtras({
+                    ...selectedExtras,
+                    [item._id]: e.target.value,
+                  })
+                }
               >
-                <select
-                  value={selectedExtras[item._id] || ''}
-                  onChange={(e) =>
-                    setSelectedExtras({
-                      ...selectedExtras,
-                      [item._id]: e.target.value,
+                {item.extras.map((ex) => (
+                  <option key={ex._id} value={ex._id}>
+                    {ex.item} (₦{ex.price})
+                  </option>
+                ))}
+              </select>
+
+              <div className="flex items-center gap-2 mt-2">
+                <button
+                  onClick={() =>
+                    removeExtraQuantity({
+                      newExtraItem: item,
+                      extraId: selectedExtras[item._id],
                     })
                   }
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    outline: 'none',
-                  }}
+                  className="px-2 py-1 border rounded"
                 >
-                  {item?.extras?.map((i) => (
-                    <option key={i._id} value={i._id}>
-                      {i.item} (₦{i.price})
-                    </option>
-                  ))}
-                </select>
+                  -
+                </button>
 
-                <div style={{ height: '30px' }}>
-                  <Button
-                    variant="outline-secondary"
-                    size="sm"
-                    onClick={() =>
-                      removeExtraQuantity({
-                        newExtraItem: item,
-                        extraId: selectedExtras[item._id],
-                      })
-                    }
+                <span>
+                  {getCartQuantity({
+                    productId: item?._id,
+                    extraId: selectedExtras[item._id],
+                  })}  
+                </span>
+
+               <button
+  onClick={() =>
+    extraQuantity({
+      newExtraItem: item,
+      extraId:
+        selectedExtras[item._id] || item.extras[0]?._id,
+    })
+  }
+  className="px-2 py-1 border rounded"
+>
+  +
+</button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {cartItems.find((i) => i._id === item._id) ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    disabled={currentQty === 1}
+                    onClick={() => handlequantity(item, currentQty - 1)}
+                    className="w-8 h-8 bg-green-600 text-white rounded-full"
                   >
                     -
-                  </Button>{' '}
-                  <span className="mx-2">
-                    {getCartQuantity({
-                      productId: item?._id,
-                      extraId: selectedExtras[item._id],
-                    })}
-                  </span>
-                  <Button
-                    variant="outline-secondary"
-                    size="sm"
-                    onClick={() =>
-                      extraQuantity({
-                        newExtraItem: item,
-                        extraId: selectedExtras[item._id],
-                      })
-                    }
+                  </button>
+
+                  <span>{currentQty}</span>
+
+                  <button
+                    onClick={() => handlequantity(item, currentQty + 1)}
+                    className="w-8 h-8 bg-green-600 text-white rounded-full"
                   >
                     +
-                  </Button>
+                  </button>
                 </div>
-              </Row>
-            ) : (
-              <div>
-                {cartItems?.find((i) => i._id === item?._id) ? (
-                  <div className="d-flex align-items-center gap-1">
-                    {' '}
-                    <Button
-                      style={{
-                        width: '30px',
-                        height: '30px',
-                        borderRadius: '50%',
-                      }}
-                      variant="success"
-                      className=" bg-success d-flex justify-content-center align-items-center fs-3 text-white"
-                      disabled={item?.quantity === 1}
-                      onClick={() =>
-                        location.pathname !== '/cart' &&
-                        location.pathname !== `/product/${item?._id}`
-                          ? handlequantity(item, item?._id)
-                          : handlequantity(item, item?.quantity - 1)
-                      }
-                    >
-                      -
-                    </Button>{' '}
-                    {quantity(item)}
-                    <Button
-                      style={{
-                        width: '30px',
-                        height: '30px',
-                        borderRadius: '50%',
-                      }}
-                      variant="success"
-                      className=" bg-success d-flex justify-content-center align-items-center fs-4 text-white"
-                      onClick={() =>
-                        location.pathname !== '/cart' &&
-                        location.pathname !== `/product/${item?._id}`
-                          ? handlequantity(item)
-                          : handlequantity(item, item?.quantity + 1)
-                      }
-                    >
-                      +
-                    </Button>{' '}
-                  </div>
-                ) : (
-                  <div className="w-100">
-                    <Button
-                      style={{
-                        borderRadius: '10px',
-                      }}
-                      variant="success"
-                      className=" bg-success w-100 text-white"
-                      onClick={() =>
-                        location.pathname !== '/cart' &&
-                        location.pathname !== `/product/${item?._id}`
-                          ? handlequantity(item)
-                          : handlequantity(item, item?.quantity + 1)
-                      }
-                    >
-                      Add
-                    </Button>{' '}
-                  </div>
-                )}
-              </div>
-            )}
-          </Card.Body>
-        </Col>
-      </Row>
-    </Card>
+              ) : (
+                <button
+                  onClick={() => handlequantity(item, 1)}
+                  className="w-full bg-green-600 text-white rounded-lg py-2"
+                >
+                  Add
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
-};
-
-export default ItemCard;
+}

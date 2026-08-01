@@ -23,13 +23,31 @@ import Error from './utils/Error';
 import VendorRegistration from './component/VendorRegistration';
 import PayTest from './component/PayTest';
 import Extra from './upload/Extra';
+import Navbars from './navSection/Navbars';
+import KitchenNew from './kitchenSection/StoresPage';
+import StoresPage from './kitchenSection/StoresPage';
+import NewKitchen from './kitchenSection/NewKitchen';
+import SearchBar from './component/SearchBar';
+import { useState } from 'react';
 
 function App() {
   const { isOpen, toggle } = useOpen();
   axios.defaults.withCredentials = true;
+   const [modal, setModal] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+
+
+   
+
+
+
+
+
+
 
   return (
     <BrowserRouter>
+     
       <div
         style={{
           width: '100%',
@@ -38,9 +56,11 @@ function App() {
           overflow: isOpen ? 'hidden' : '',
         }}
       >
+       
         <div style={{ position: 'sticky', width: '', top: 0, zIndex: 99999 }}>
           {' '}
-          <Navbar openNow={isOpen} setOpenNow={toggle} />
+          {/* <Navbar openNow={isOpen} setOpenNow={toggle} /> */}
+          <Navbars />
         </div>
         <ToastContainer
           position="bottom-center"
@@ -53,7 +73,7 @@ function App() {
           pauseOnHover
         />
 
-        {isOpen && (
+        {/* {isOpen && (
           <div
             style={{
               width: '100%',
@@ -66,18 +86,23 @@ function App() {
           >
             <LocationPage setOpen={toggle} />
           </div>
-        )}
+        )} */}
         <Routes>
-          <Route path="/" element={<HomePage setOpen={toggle} />} />
+          <Route path="/" element={<HomePage selectedLocation={selectedLocation} setSelectedLocation={setSelectedLocation} modal={modal} setModal={setModal} setOpen={toggle} />} />
           <Route path="/product/:id" element={<Product />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/kitchen/:id" element={<Kitchen />} />
+          <Route path="/kitchens/:id" element={<Kitchen />} />
+          <Route path="/sb" element={<SearchBar />} />
           <Route path="/vendor" element={<VendorRegistration />} />
+          <Route path="/search" element={<StoresPage setOpenLocation={toggle}/>} />
           <Route
-            path="/search"
+            path="/searchs"
             element={<SearchScreen setOpenLocation={toggle} />}
           />
+          
 
+          {/* <Route path="/kitchen/:id" element={<KitchenNew />} /> */}
+          <Route path="/kitchen/:id" element={<NewKitchen />} />
           <Route path="/riders" element={<RidersPage />} />
           <Route path="/rider/:id" element={<RiderCard />} />
           <Route path="/profile/:id" element={<Profile />} />

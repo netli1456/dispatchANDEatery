@@ -57,22 +57,7 @@ function OtpVerification() {
     }
   };
 
-  useEffect(() => {
-    const handleCount = () => {
-      let count = countdown;
-      const timer = setInterval(() => {
-        if (count > 0) {
-          count -= 1;
-          dispatch(updateCountDown(count));
-        } else {
-          clearInterval(timer);
-        }
-      }, 1000);
 
-      return () => clearInterval(timer);
-    };
-    handleCount();
-  }, [countdown, dispatch]);
 
   const handleCount = async () => {
     try {
@@ -153,7 +138,7 @@ function OtpVerification() {
                   userInfo?.email?.slice(-13)
                 } `}</strong>
                 <br />
-                check your email inbox or spam folder
+                check your <b className='uppercase'>email inbox or spam folder</b>
               </span>
               <form
                 className="d-flex gap-1 my-4 justify-content-center align-items-center "
@@ -180,7 +165,7 @@ function OtpVerification() {
                 className="my-4  "
                 onClick={handleCount}
               >
-                Resend Code{countdown > 0 && `(${countdown}s)`}
+                Resend Code
               </Button>
               <div className="d-grid" style={{ position: 'relative' }}>
                 <Button

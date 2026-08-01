@@ -16,10 +16,18 @@ import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 import { toast } from 'react-toastify';
 import { clearCount } from '../redux/userSlice';
 import { clearLocation } from '../redux/searchSlice';
+import Hero from '../heroComponent/Hero';
+import PopularNearYou from '../popularNearU/PopularNearYou';
+import BrowseByCat from '../browseByCategory/BrowseByCat';
+import HowItWorks from '../howItWorks/HowItWorks';
+import Footers from '../footerSection/Footers';
+import LocationSearchModal from '../locationSearch/LocationSearchModal';
+import locations from "../data/locations.json";
+
 
 function HomePage(props) {
   const [data, setData] = useState([]);
-  const { setOpen } = props;
+  const { setOpen, selectedLocation, setSelectedLocation, modal, setModal } = props;
   const [carouselData, setCarouselData] = useState([]);
   const randomNum = Math.floor(Math.random() * 500);
   const page = 1;
@@ -30,13 +38,14 @@ function HomePage(props) {
   const dispatch = useDispatch();
 
   const location = useLocation();
+  
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const productResponse = await axios.get(
-          `${api}/api/products?query=${userId}`
+          `${api}/api/products?query=${userId}`,
         );
 
         setData(productResponse.data);
@@ -54,7 +63,7 @@ function HomePage(props) {
       setLoading(true);
       try {
         const userResponse = await axios.get(
-          `${api}/api/users/stores?page=${page}`
+          `${api}/api/users/stores?page=${page}`,
         );
         setLoading(false);
         setCarouselData(userResponse.data.stores);
@@ -78,18 +87,43 @@ function HomePage(props) {
   };
 
   return (
-    <div style={{ overflowX: 'hidden', backgroundColor: '' }}>
-      <Map setOpen={setOpen} />
+    <div className={loading ? 'max-h-40 p-0 flex flex-col' : 'min-h-screen p-0 flex flex-col'} style={{ overflowX: 'hidden',  }}>
+      {/* <Map setOpen={setOpen} /> */}
+      <div className='flex-1'>
+      <div>
+        <Hero selectedLocation={selectedLocation} setSelectedLocation={setSelectedLocation} open={modal} setOpen={setModal}/>
 
-      <div className="my-5 d-flex justify-content-center">
+           <LocationSearchModal
+        open={modal}
+        onClose={() => setModal(false)}
+        locations={locations}
+        onSelect={(location) => {
+          setSelectedLocation(location);
+          setOpen(false);
+
+          console.log(location);
+        }}
+      />
+
+      </div>
+      <div>
+        <PopularNearYou loading={loading} carouselData={carouselData}  />
+      </div>
+      <div>
+        <BrowseByCat setOpen={setOpen} />
+      </div>
+
+      <div><HowItWorks/></div>
+
+      {/* <div className="my-5 d-flex justify-content-center">
         {' '}
         <h3 className="border-bottom border-secondary">
           Eateries / Restaurants near you
           <HouseOutlinedIcon className="fs-1 text-success" />
         </h3>
-      </div>
+      </div> */}
 
-      <div className="rowParent2 ">
+      {/* <div className="rowParent2 ">
         <HomeFeatures loading={loading} carouselData={carouselData} />
         <div className="d-flex justify-content-center text-secondary  py-3">
           <div className="d-flex my-5 flex-column">
@@ -173,13 +207,14 @@ function HomePage(props) {
           </div>
         )}
       </div>
-      <div style={{ marginTop: '120px' }}></div>
-      <div className="my-5">
+      <div style={{ marginTop: '120px' }}></div> */}
+      <div >
         <LetsDoItTogether />
+      </div>
       </div>
 
       <div className=" p-2">
-        <Footer />
+        <Footers />
       </div>
     </div>
   );

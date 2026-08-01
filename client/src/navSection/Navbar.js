@@ -20,6 +20,8 @@ import { useOpen } from '../utils/isOpenState';
 import axios from 'axios';
 import { api } from '../utils/apiConfig';
 
+import { MapPin, Search, ShoppingCart, Menu, X } from 'lucide-react';
+
 function Navbar(props) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,6 +32,8 @@ function Navbar(props) {
   const { searchedLocation } = useSelector((state) => state.searching);
   const { setOpenNow } = props;
   const { isOpen, toggle } = useOpen();
+
+  const [open, setOpen] = useState(false);
 
   const handleLogOut = async () => {
     await axios.post(`${api}/api/users/logout`);
@@ -67,15 +71,12 @@ function Navbar(props) {
           </Link>
         </div> */}
 
-      <div className="d-flex gap-3 align-items-center navbarIcon px-2">
-  <MenuIcon className="fs-2 fw-bold" />
-  <Link to="/" className="text-decoration-none text-dark text-logo">
-    <span className="curved-text">Naija-Eateries</span>
-  </Link>
-</div>
-
-
-
+        <div className="d-flex gap-3 align-items-center navbarIcon px-2">
+          <MenuIcon className="fs-2 fw-bold" />
+          <Link to="/" className="text-decoration-none text-dark text-logo">
+            <span className="curved-text">Naija-Eateries</span>
+          </Link>
+        </div>
 
         {searchedLocation && (
           <Button variant="success" className="bg-success ">

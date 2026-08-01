@@ -2,9 +2,9 @@
 function ShippingDetails({ shipping }) {
   return (
     <div>
-      <div className="d-flex flex-wrap  flex-column text-capitalize">
+      <div className="d-flex flex-wrap mt-2 flex-column text-capitalize">
         <div className="d-flex flex-wrap align-items-center gap-1">
-          <span className='fw-bold'>Address:</span>
+          <span className='text-gray-600 fw-bold'>Address:</span>
           <div>
             {' '}
             <span >
@@ -14,11 +14,11 @@ function ShippingDetails({ shipping }) {
           </div>
         </div>
         <div className="d-flex align-items-center  gap-2">
-          <span className='fw-bold'>Name: </span>
-          <span >{shipping?.name}</span>
+          <span className='fw-bold text-gray-600'>Name: </span>
+          <span className="">{shipping?.name}</span>
         </div>
         <div className="d-flex align-items-center gap-2">
-          <span className='fw-bold'>phone number: </span>
+          <span className='fw-bold text-gray-600'>phone number: </span>
           <span >{shipping?.phoneNumber}</span>
         </div>
       </div>

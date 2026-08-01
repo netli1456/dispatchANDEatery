@@ -1,4 +1,5 @@
 import Product from '../models/Product.js';
+import { Soup } from '../models/soup.js';
 import User from '../models/userModel.js';
 
 export const ping = async (req, res) => {
@@ -12,7 +13,7 @@ export const ping = async (req, res) => {
 export const postProduct = async (req, res) => {
   try {
     const userId = req.query.userId;
-
+  console.log('products', req.body);
     let imgs = [];
 
     const user = await User.findById(userId.toString());
@@ -33,7 +34,6 @@ export const postProduct = async (req, res) => {
       }
     }
     const extras = JSON.parse(req.body.extras)
-  console.log('extra', req.body.extras)
     const product = new Product({
       ...req.body,
       userId: user._id,
@@ -41,9 +41,10 @@ export const postProduct = async (req, res) => {
       extras:extras
     });
     await product.save();
+ 
     res.status(200).json(product);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json(error);
   }
 };
 
@@ -175,14 +176,26 @@ export const kitchenItems = async (req, res) => {
       $match: { _id: { $nin: Array.from(fetchKitchenProducts) } },
     });
 
+  
+
     const products = await Product.aggregate(aggregationPipeline);
     const user = await User.findById(userId);
+      const soup = await Soup.find({userId:user._id.toString()});
+    if(!soup) return res.status(404).json({message: 'no soup found'})
 
     res.status(200).json({
       products: products,
       businessName: user.businessName,
       verified: user.verified,
       businessImg: user.businessImg,
+      rating: user.rating,
+      reviews: user.reviews,
+      minOrder: user.minOrder,
+      physicalAddress: user.physicalAddress,
+      category: user.category,
+      km: user.km,
+      soups: soup,
+      businessId:user._id
     });
   } catch (error) {
     res.status(500).json({ message: 'something went wrong' });

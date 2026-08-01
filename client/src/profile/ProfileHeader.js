@@ -68,7 +68,6 @@ function ProfileHeader(props) {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const openUpload = params.get('openUpload');
-    console.log('busineowner', isBusinessOwner);
     if (typeof isBusinessOwner === 'boolean') {
       const vendorRegister = () => {
         if (openUpload === 'true' && isBusinessOwner === false) {
@@ -246,7 +245,7 @@ function ProfileHeader(props) {
                 )}
                 {isBusinessOwner === false && (
                   <Button
-                    onClick={() => setUploadOpen('vendor')}
+                    onClick={() => navigate('/vendor')}
                     variant="warning "
                     className="fw-bold mx-3"
                   >
