@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react';
 // export const api = 'https://mbiteapi.onrender.com';
 
 const isCapacitor = window.Capacitor !== undefined; 
-// export const api = isCapacitor
-//   ? 'https://biteapi.onrender.com'
-//   : 'https://biteapi.onrender.com';
+export const api = isCapacitor
+  ? 'https://biteapi.onrender.com'
+  : 'https://biteapi.onrender.com';
 
-export const api = 'http://localhost:5000';
+// export const api = 'http://localhost:5000';
 
 export const useFingerprint = () => {
   const [fingerprint, setFingerprint] = useState('');
