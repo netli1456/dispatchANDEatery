@@ -33,7 +33,7 @@ export default function Navbars() {
 
   return (
     <header className="w-full bg-white">
-      <div className="flex gap-3 items-center justify-between px-4 py-3 md:px-8">
+      <div className={open ? "relative flex gap-3 items-center justify-between px-4 py-3 md:px-8":"flex gap-3 items-center justify-between px-4 py-3 md:px-8"}>
         {/* Logo */}
         <Link
           to="/"
@@ -116,7 +116,7 @@ export default function Navbars() {
             {open && (
               <div className="absolute  top-10 right-0 bg-green-600 shadow-md rounded-md p-4 w-40 flex flex-col gap-2">
                 {' '}
-                <Link to={`/profile/${userInfo?.user?._id}`} className="font-medium text-white hover:text-green-200 cursor-pointer">
+                <Link  to={`/profile/${userInfo?.user?._id}`} className="font-medium text-white hover:text-green-200 cursor-pointer">
                   Profile
                 </Link>
                 <span className="font-medium text-white hover:text-green-200 cursor-pointer">
@@ -138,12 +138,39 @@ export default function Navbars() {
 
       {/* Mobile Nav */}
       {open && (
-        <div className="md:hidden px-4 pb-4 flex flex-col gap-3 text-sm text-gray-700">
-          <Link to="">Home</Link>
-          <Link onClick={() => navigate('/search')}>Browse Kitchens</Link>
-          <Link to="">Track Order</Link>
-          <Link to="">Become a Vendor</Link>
-          <Link to="">Help</Link>
+        <div className="absolute top-16 left-0 w-full bg-white shadow-md z-50">
+          <nav className="md:hidden px-4 pb-4 flex flex-col gap-3 text-sm text-gray-700">
+          <Link
+            to="/" onClick={()=> setOpen(!open)}
+            className={location.pathname === '/' ? "hover:text-green-600 underline text-green-600" : "hover:text-green-600 no-underline text-gray-700"}
+          >
+            Home
+          </Link>
+          <Link
+            to="/search" onClick={()=> setOpen(!open)}
+            className={location.pathname === '/search' ? "hover:text-green-600 underline text-green-600" : "hover:text-green-600 no-underline text-gray-700"}
+          >
+            Browse Kitchens
+          </Link>
+          <Link
+            to={`/profile/${userInfo?.user?._id}`} onClick={()=> setOpen(!open)}
+            className={location.pathname === `/profile/${userInfo?.user?._id}` ? "hover:text-green-600 underline text-green-600" : "hover:text-green-600 no-underline text-gray-700"}
+          >
+            Track Order
+          </Link>
+          <Link
+            to="/vendor" onClick={()=> setOpen(!open)}
+            className={location.pathname === '/vendor' ? "hover:text-green-600 underline text-green-600" : "hover:text-green-600 no-underline text-gray-700"}
+          >
+            Become a Vendor
+          </Link>
+          <Link
+            to="/help" onClick={()=> setOpen(!open)}
+            className={location.pathname === '/help' ? "hover:text-green-600 underline text-green-600" : "hover:text-green-600 no-underline text-gray-700"}
+          >
+            Help
+          </Link>
+        </nav>
         </div>
       )}
     </header>

@@ -144,10 +144,10 @@ useEffect(() => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[32px] shadow-2xl animate-in fade-in zoom-in duration-200">
+    <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm grid place-items-center p-4">
+      <div className="bg-white w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-[32px] shadow-2xl animate-in fade-in zoom-in duration-200">
         {/* HEADER */}
-        <div className="p-6 pb-4 flex items-start justify-between">
+        <div className=" p-6 pb-4 flex items-start justify-between">
           <div className="flex flex-col align-center">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
               Where shall we deliver to?
