@@ -34,9 +34,9 @@ export default function Hero({ open, setOpen }) {
             <input
               type="text"
               placeholder="Enter your delivery address..."
-              className="flex-1 px-2 py-3 outline-none text-gray-700"
+              className="flex-1 px-0  md:px-2 py-1 md:py-3 outline-none text-gray-700"
             />
-            <button className="bg-green-700 hover:bg-green-800 text-white px-2 md:px-5 py-3 font-medium">
+            <button className="bg-green-700 hover:bg-green-800 text-white px-2 md:px-5  py-2 font-medium">
               Find Food
             </button>
           </div>

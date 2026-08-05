@@ -148,8 +148,8 @@ useEffect(() => {
       <div className="bg-white my-5 w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
         {/* HEADER */}
         <div className="p-6 pb-4 flex items-start justify-between">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 leading-tight">
+          <div className="flex flex-col align-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
               Where shall we deliver to?
             </h2>
 
