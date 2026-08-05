@@ -144,8 +144,8 @@ useEffect(() => {
   if (!open) return null;
 
   return (
-    <div className="fixed  inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
-      <div className="bg-white my-5 w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[32px] shadow-2xl animate-in fade-in zoom-in duration-200">
         {/* HEADER */}
         <div className="p-6 pb-4 flex items-start justify-between">
           <div className="flex flex-col align-center">

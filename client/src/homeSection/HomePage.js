@@ -101,7 +101,6 @@ function HomePage(props) {
           setSelectedLocation(location);
           setOpen(false);
 
-          console.log(location);
         }}
       />
 
